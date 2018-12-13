@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:orientation="vertical"
+    android:background="#49caa0"
+    android:paddingRight="22dp"
+    android:paddingLeft="22dp"
+    android:paddingTop="120dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:id="@+id/email"
+        android:textColor="#000"
+        android:background="#fff"
+        android:padding="8dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:id="@+id/password"
+        android:textColor="#000"
+        android:background="#fff"
+        android:layout_marginTop="10dp"
+        android:padding="8dp"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textColor="#40b991"
+        android:background="#e9eaef"
+        android:layout_marginTop="36dp"
+        android:id="@+id/btnlogin"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Not a member? Sign up."
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:id="@+id/signup"
+        />
+
+</LinearLayout>
