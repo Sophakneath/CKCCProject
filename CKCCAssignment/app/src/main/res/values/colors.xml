@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#ff4081</color>
+    <color name="mainColor">#63E9EF</color>
+    <color name="primaryColor">#00C4CC</color>
+    <color name="mainTitle">#727272</color>
+    <color name="subTitle">#9A9A9A</color>
+    <color name="whiteBlurr">#dec1c1c1</color>
+    <color name="mainTitle1">#393939</color>
+</resources>
