@@ -9,4 +9,6 @@
     <color name="subTitle">#9A9A9A</color>
     <color name="whiteBlurr">#dec1c1c1</color>
     <color name="mainTitle1">#393939</color>
+    <color name="colorForPic">#e7e7e7</color>
+    <color name="transparent">#00000000</color>
 </resources>

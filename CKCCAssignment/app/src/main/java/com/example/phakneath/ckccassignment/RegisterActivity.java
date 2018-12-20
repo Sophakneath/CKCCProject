@@ -42,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_register);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -50,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         initView();
         signup.setOnClickListener(this::onClick);
         gotoLogin.setOnClickListener(this::onClick);
+        //phoneNum.requestFocusFromTouch();
     }
 
     public void initView()
@@ -128,7 +130,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         myPhoneNum = phoneNum.getText().toString().trim();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        User user = new User(id,name,myEmail,myPhoneNum,null,null, null, null);
+        User user = new User(id,name,myEmail,myPhoneNum,null,null, null, null,null);
         mDatabase.child("user").child("id").child(id).setValue(user);
     }
 

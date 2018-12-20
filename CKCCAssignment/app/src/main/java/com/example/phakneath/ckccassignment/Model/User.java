@@ -1,5 +1,8 @@
 package com.example.phakneath.ckccassignment.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,10 +16,11 @@ public class User implements Serializable {
     private List<LostFound> founds;
     private String imagePath;
     private String extension;
+    private List<LostFound> save;
 
     public User(){}
 
-    public User(String id, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension) {
+    public User(String id, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension, List<LostFound> save) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -25,6 +29,7 @@ public class User implements Serializable {
         this.founds = founds;
         this.imagePath = imagePath;
         this.extension = extension;
+        this.save = save;
     }
 
     public String getId() {
@@ -90,4 +95,12 @@ public class User implements Serializable {
     public void setExtension(String extension) {
         this.extension = extension;
     }
-}
+
+    public List<LostFound> getSave() {
+        return save;
+    }
+
+    public void setSave(List<LostFound> save) {
+        this.save = save;
+    }
+    }

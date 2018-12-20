@@ -1,19 +1,26 @@
 package com.example.phakneath.ckccassignment.Model;
 
-public class LostFound {
+import java.io.Serializable;
+
+public class LostFound implements Serializable {
 
     private String id;
     private String item;
     private String location;
     private String contactNum;
     private String remark;
+    private String reward;
+    private String myOwner;
 
-    public LostFound(String id, String item, String location, String contactNum, String remark) {
+    public LostFound(){}
+    public LostFound(String id, String item, String location, String contactNum, String remark, String reward, String myOwner) {
         this.id = id;
         this.item = item;
         this.location = location;
         this.contactNum = contactNum;
         this.remark = remark;
+        this.reward = reward;
+        this.myOwner = myOwner;
     }
 
     public String getId() {
@@ -54,5 +61,21 @@ public class LostFound {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getReward() {
+        return reward;
+    }
+
+    public void setReward(String reward) {
+        this.reward = reward;
+    }
+
+    public String getMyOwner() {
+        return myOwner;
+    }
+
+    public void setMyOwner(String myOwner) {
+        this.myOwner = myOwner;
     }
 }

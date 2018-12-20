@@ -8,163 +8,144 @@
     tools:context=".PostingActivity"
     android:id="@+id/drawer_layout">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="95dp"
-            android:background="@color/mainColor"
-            android:visibility="visible"
-            >
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:orientation="horizontal"
-                android:id="@+id/title1"
-                android:layout_marginTop="28dp">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/icon1"
-                        android:id="@+id/iconMenu"
-                        />
-                </RelativeLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="DISCOVER"
-                    android:textSize="25dp"
-                    android:textColor="@android:color/white"
-                    android:id="@+id/title"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/search"
-                    android:id="@+id/searchView"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginLeft="20dp"
-                    />
+                android:layout_height="95dp"
+                android:background="@color/mainColor"
+                android:visibility="visible"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:orientation="horizontal"
-                    android:visibility="gone"
-                    android:id="@+id/linear">
+                    android:id="@+id/title1"
+                    android:layout_marginTop="28dp">
 
-                    <android.support.v7.widget.SearchView
-                        android:id="@+id/search"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:background="@color/white"
-                        android:visibility="gone">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp">
 
-                    </android.support.v7.widget.SearchView>
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/icon1"
+                            android:id="@+id/iconMenu"
+                            />
+                    </RelativeLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="DISCOVER"
+                        android:textSize="25dp"
+                        android:textColor="@android:color/white"
+                        android:id="@+id/title"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/search"
+                        android:id="@+id/searchView"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="20dp"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cancel"
-                        android:id="@+id/cancel"
-                        android:layout_marginRight="20dp"
-                        android:textSize="17dp"
-                        android:textColor="@color/white"
+                        android:orientation="horizontal"
                         android:visibility="gone"
-                        android:layout_marginTop="7dp"/>
+                        android:id="@+id/linear">
+
+                        <android.support.v7.widget.SearchView
+                            android:id="@+id/search"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:background="@color/white"
+                            android:visibility="gone">
+
+                        </android.support.v7.widget.SearchView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cancel"
+                            android:id="@+id/cancel"
+                            android:layout_marginRight="20dp"
+                            android:textSize="17dp"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
+                            android:layout_marginTop="7dp"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/discover"
-                >
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@drawable/tab"
-                    android:layout_margin="10dp"
-                    android:id="@+id/backgroundDiscover"
-                    android:visibility="visible"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:text="DISCOVER"
-                    android:textSize="13dp"
-                    android:layout_margin="10dp"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/mainTitle"
-                    android:gravity="center"
-                    android:textStyle="bold"/>
             </RelativeLayout>
 
-            <RelativeLayout
+            <com.ogaclejapan.smarttablayout.SmartTabLayout
+                android:id="@+id/viewpagertab"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:clipToPadding="false"
+                android:layout_gravity="center_horizontal"
+                app:stl_defaultTabTextColor="@color/mainTitle"
+                app:stl_defaultTabTextHorizontalPadding="50dp"
+                app:stl_defaultTabTextSize="13dp"
+                app:stl_defaultTabTextMinWidth="180dp"
+                app:stl_dividerColor="@color/transparent"
+                app:stl_indicatorColor="#EFEFEF"
+                app:stl_indicatorCornerRadius="18dp"
+                app:stl_indicatorGravity="center"
+                app:stl_indicatorInterpolation="smart"
+                app:stl_indicatorThickness="33dp"
+                app:stl_indicatorWidth="180dp"
+                app:stl_underlineColor="@color/transparent"
+                app:stl_underlineThickness="0dp"
+                />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/found">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@drawable/tab"
-                    android:layout_margin="10dp"
-                    android:visibility="gone"
-                    android:id="@+id/backgroundFound"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:gravity="center"
-                    android:text="LOST"
-                    android:textSize="13dp"
-                    android:layout_margin="10dp"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/mainTitle"
-                    android:textStyle="bold"/>
-            </RelativeLayout>
-
-
+                android:layout_height="match_parent"
+                />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/container"></LinearLayout>
 
-    </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="20dp"
+            app:srcCompat="@drawable/ic_add_black_24dp"
+            android:backgroundTint="@color/mainColor"
+            app:borderWidth="0dp"
+            app:elevation="6dp"
+            app:fabSize="normal"
+            />
+
+    </FrameLayout>
 
     <android.support.design.widget.NavigationView
         android:layout_width="320dp"
@@ -176,7 +157,6 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/header_layout"
         android:id="@+id/nav">
-
 
     </android.support.design.widget.NavigationView>
 

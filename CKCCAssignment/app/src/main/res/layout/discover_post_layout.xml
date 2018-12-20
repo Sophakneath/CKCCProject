@@ -7,9 +7,9 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginRight="13dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="7dp"
         android:layout_marginBottom="7dp"
         app:cardElevation="3dp"
         app:cardCornerRadius="9dp"
@@ -35,16 +35,13 @@
                     android:layout_height="65dp"
                     android:src="@drawable/pic"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/defaultpic"/>
+                    android:layout_centerVertical="true"/>
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/staryellow"
+                    android:src="@drawable/star"
                     android:layout_margin="10dp"
-                    android:id="@+id/staryellow"
-                    android:visibility="gone"
                     />
 
                 <ImageView
@@ -53,8 +50,7 @@
                     android:src="@drawable/more"
                     android:layout_margin="10dp"
                     android:layout_alignParentEnd="true"
-                    android:id="@+id/more"
-                    android:visibility="gone"/>
+                    android:id="@+id/more"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -66,7 +62,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Found : "
+                    android:text="Discover : "
                     android:textSize="16dp"
                     android:layout_margin="10dp"
                     android:id="@+id/found"/>
@@ -102,8 +98,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:id="@+id/save">
+                        android:gravity="center">
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -114,8 +109,7 @@
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:src="@drawable/bookmark"
-                                android:id="@+id/notsave"
-                                />
+                                android:id="@+id/notsave" />
 
                             <ImageView
                                 android:layout_width="30dp"
@@ -133,7 +127,6 @@
                             android:layout_marginLeft="8dp"
                             android:textSize="16dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/tsave"
                             />
                     </RelativeLayout>
 
@@ -141,8 +134,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:id="@+id/shareTo">
+                        android:gravity="center">
 
                         <ImageView
                             android:layout_width="30dp"

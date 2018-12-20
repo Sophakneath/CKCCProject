@@ -18,7 +18,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="horizontal"
             android:id="@+id/title1"
             android:layout_marginTop="28dp">
@@ -102,13 +101,13 @@
                     android:layout_width="65dp"
                     android:layout_height="65dp"
                     android:src="@drawable/userprofile"
-                    android:id="@+id/profile"/>
+                    android:id="@+id/profilePic"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_toRightOf="@+id/profile"
+                    android:layout_toRightOf="@+id/profilePic"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp">
 
@@ -118,68 +117,104 @@
                         android:text="Username"
                         android:textSize="17dp"
                         android:textColor="@color/mainTitle1"
+                        android:id="@+id/username"
                         />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Phnom Pneh"
+                        android:text="6 minutes ago"
                         android:textSize="13dp"
                         android:textColor="@color/mainTitle"/>
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6 minutes ago"
-                    android:textColor="@color/mainTitle"
-                    android:textSize="13dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/more"
+                    android:id="@+id/more"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:src="@drawable/sea"
-                android:scaleType="centerCrop"/>
-            
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:src="@drawable/sea"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/picture"
+                    />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/staryellow"
+                    android:id="@+id/rewardStar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" 
                 android:text="Found : "
                 android:layout_marginTop="18dp"
                 android:textSize="16dp"
                 android:textColor="@color/mainTitle"
-                android:layout_marginLeft="18dp"/>
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:id="@+id/found"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Location : "
                 android:layout_marginTop="18dp"
                 android:textSize="16dp"
                 android:textColor="@color/mainTitle"
-                android:layout_marginLeft="18dp"/>
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:id="@+id/location"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Contact : "
                 android:layout_marginTop="18dp"
                 android:textSize="16dp"
                 android:textColor="@color/mainTitle"
-                android:layout_marginLeft="18dp"/>
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:id="@+id/contact"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Remark : "
                 android:layout_marginTop="18dp"
                 android:textSize="16dp"
                 android:textColor="@color/mainTitle"
-                android:layout_marginLeft="18dp"/>
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:id="@+id/Remark"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reward Description : "
+                android:layout_marginTop="18dp"
+                android:textSize="16dp"
+                android:textColor="@color/mainTitle"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:id="@+id/rewardDes"/>
         </LinearLayout>
 
     </ScrollView>
@@ -193,19 +228,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/save">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/star"
-                android:id="@+id/star"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/saveCon">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/bookmark"
+                    android:id="@+id/notsave" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/onsave"
+                    android:id="@+id/onsave"
+                    android:visibility="gone"/>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:text="Save"
-                android:layout_toRightOf="@+id/star"
+                android:layout_toRightOf="@+id/saveCon"
                 android:layout_marginLeft="8dp"
                 android:textSize="16dp"
                 android:gravity="center_vertical"
@@ -216,7 +265,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/shareTo">
 
             <ImageView
                 android:layout_width="30dp"
@@ -227,7 +277,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text="Save"
+                android:text="Share"
                 android:layout_toRightOf="@+id/share"
                 android:layout_marginLeft="8dp"
                 android:textSize="16dp"

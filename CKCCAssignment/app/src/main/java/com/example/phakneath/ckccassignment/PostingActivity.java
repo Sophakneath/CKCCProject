@@ -6,30 +6,29 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
 import com.example.phakneath.ckccassignment.Dialog.LoadingDialog;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
-import com.example.phakneath.ckccassignment.Fragment.PostFoundFragment;
-import com.example.phakneath.ckccassignment.Fragment.ViewDiscoverFragment;
-import com.example.phakneath.ckccassignment.Fragment.ViewFoundFragment;
+import com.example.phakneath.ckccassignment.Fragment.PostLostFragment;
+import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.sharePreferences.UserPreferences;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +39,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,11 +60,10 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     FirebaseStorage storage;
     public static Activity activity;
     LoadingDialog dialog = new LoadingDialog();
-    RelativeLayout discover, found;
-    LinearLayout container;
+    FrameLayout container;
     PostDiscoverFragment postDiscoverFragment = new PostDiscoverFragment();
-    PostFoundFragment postFoundFragment = new PostFoundFragment();
-    ImageView bDiscover, bFound;
+    PostLostFragment postLostFragment = new PostLostFragment();
+    FloatingActionButton add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +81,21 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         header.setOnClickListener(this::onClick);
         search.setOnClickListener(this::onClick);
-        discover.setOnClickListener(this::onClick);
-        found.setOnClickListener(this::onClick);
+        add.setOnClickListener(this::onClick);
+
         getUser();
-        openDiscover();
+
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add("Discover", PostDiscoverFragment.class)
+                .add("Lost", PostLostFragment.class)
+                .create());
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+
+        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPagerTab.setViewPager(viewPager);
     }
 
     public void initView()
@@ -98,10 +110,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         name = headerView.findViewById(R.id.username);
         container = findViewById(R.id.container);
         search = findViewById(R.id.searchView);
-        discover = findViewById(R.id.discover);
-        found = findViewById(R.id.found);
-        bDiscover = findViewById(R.id.backgroundDiscover);
-        bFound = findViewById(R.id.backgroundFound);
+        add = findViewById(R.id.add);
     }
 
 
@@ -115,17 +124,12 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         {
             startActivity(new Intent(this, ProfileActivity.class));
         }
-        else if(v == search)
-        {
-            startActivity(new Intent(this, DetailActivity.class));
+        else if(v == search) {
+
         }
-        else if(v == discover)
+        else if(v == add)
         {
-            openDiscover();
-        }
-        else if(v == found)
-        {
-            openFound();
+            startActivity(new Intent(this, LostFoundActivity.class));
         }
     }
 
@@ -203,28 +207,6 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         name.setText(username);
         if(imagePath != null && extension != null)
         getImage(profile, imagePath+"."+extension, this);
-    }
-
-    public void openDiscover()
-    {
-        bDiscover.setVisibility(View.VISIBLE);
-        bFound.setVisibility(View.GONE);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-        transaction.replace(R.id.container, postDiscoverFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void openFound()
-    {
-        bFound.setVisibility(View.VISIBLE);
-        bDiscover.setVisibility(View.GONE);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.container, postFoundFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -179,6 +180,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         else if(v == login)
         {
+            InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(login.getWindowToken(), 0);
             if (TextUtils.isEmpty(email.getText()) || TextUtils.isEmpty(password.getText())) {
                 Toast.makeText(this, "Please Enter Require Information above !", Toast.LENGTH_SHORT).show();
             } else {

@@ -97,7 +97,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
         updateUI(user);
-
     }
 
     public void updateUI(User user)

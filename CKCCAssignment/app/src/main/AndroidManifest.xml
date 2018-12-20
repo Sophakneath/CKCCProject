@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +21,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".RegisterActivity"
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity android:name=".PostingActivity" />
         <activity android:name=".ProfileActivity" />
         <activity
@@ -34,6 +37,10 @@
         <activity android:name=".EditEmailActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
         <activity android:name=".AboutActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity android:name=".EditPostActivity"></activity>
     </application>
 
 </manifest>

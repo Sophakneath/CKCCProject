@@ -1,6 +1,7 @@
 package com.example.phakneath.ckccassignment.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
+import com.example.phakneath.ckccassignment.DetailActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
@@ -29,24 +30,21 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.ViewHolder> {
+public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHolder> {
 
     private Context context;
     private List<LostFound> lostFounds;
     public openDetail openDetail;
-    private User user;
     private String uID;
     public myLostAdapter.editPost editPost;
-    public deletePosts deletePosts;
-    public List<LostFound> saves = new ArrayList<>();
+    public foundListAdapter.deletePosts deletePosts;
+    private List<LostFound> saves = new ArrayList<>();
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
 
-    public foundListAdapter(Context context, List<LostFound> lostFounds, String uID)
+    public lostListAdapter(Context context, List<LostFound> lostFounds, String uID)
     {
         this.context = context;
         this.lostFounds = lostFounds;
@@ -58,15 +56,16 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         this.saves = saves;
     }
 
+
     @NonNull
     @Override
-    public foundListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public lostListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.found_list_layout, parent, false);
-        return new foundListAdapter.ViewHolder(view);
+        return new lostListAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull foundListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull lostListAdapter.ViewHolder holder, int position) {
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
 
@@ -77,7 +76,6 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
         if(lostFound.getMyOwner().equals(uID)) holder.more.setVisibility(View.VISIBLE);
 
-        //Toast.makeText(context, saves.size(), Toast.LENGTH_SHORT).show();
         getSaves(holder.onSave, holder.notsave, lostFounds.get(position));
 
         holder.more.setOnClickListener(new View.OnClickListener() {
@@ -94,8 +92,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
                                 //Toast.makeText(context, "Eidt", Toast.LENGTH_SHORT).show();
                                 editPost.onEditPost(lostFounds.get(position));
                                 return true;
-                            case R.id.delete:
-                                deletePosts.onDeletePosts(lostFounds.get(position));
+                            case R.id.delete: deletePosts.onDeletePosts(lostFounds.get(position));
                                 return true;
                             default:
                                 return false;
@@ -111,8 +108,8 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDetail.onOpenDetailFoundPost(lostFounds.get(position));
-                //Toast.makeText(context, ""+lostFounds.get(position), Toast.LENGTH_SHORT).show();
+
+                openDetail.onOpenDetailLostPost(lostFounds.get(position));
             }
         });
 
@@ -140,7 +137,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView more, notsave, onSave;
+        ImageView more,notsave, onSave;
         CardView container;
         ImageView star, imagefound, defaultpic;
         TextView found, location, contact, tsave;
@@ -167,12 +164,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
 
     public interface openDetail
     {
-        public void onOpenDetailFoundPost(LostFound lostFound);
-    }
-
-    public interface deletePosts
-    {
-        public void onDeletePosts(LostFound lostFound);
+        public void onOpenDetailLostPost(LostFound lostFound);
     }
 
     public void onSave(LostFound lostFound, ImageView a, ImageView b)
@@ -209,7 +201,6 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
                 }
 
                 saves = savess;
-
                 if(saves.size() >0)
                     for (LostFound l: saves) {
                         if(l.getId().equals(lf.getId()))

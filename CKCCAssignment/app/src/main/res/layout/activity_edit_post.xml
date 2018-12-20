@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditPostActivity"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:background="@color/mainColor"
+        android:visibility="visible"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            android:id="@+id/title1"
+            android:layout_marginTop="28dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/back"
+                    android:id="@+id/back"
+                    />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="EDIT POST"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:id="@+id/title"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:text="     "
+                android:textColor="@color/white"
+                android:id="@+id/setting"
+                android:textSize="23dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center_vertical"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:id="@+id/linear">
+
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/white"
+                    android:visibility="gone">
+
+                </android.support.v7.widget.SearchView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:id="@+id/cancel"
+                    android:layout_marginRight="20dp"
+                    android:textSize="17dp"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:layout_marginTop="7dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    android:background="#EFEFEF"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/picture"
+                    />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:src="@drawable/pic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/defaultpic"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Found / Lost"
+                    android:textSize="16dp"
+                    android:textColor="@color/mainTitle"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="20dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/retangle_edittext"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="5dp"
+                    android:hint="e.g. Wallet"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/mainTitle1"
+                    android:id="@+id/item"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="16dp"
+                    android:textColor="@color/mainTitle"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="20dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/retangle_edittext"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="5dp"
+                    android:hint="e.g. Rule University, Phnom Penh"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/mainTitle1"
+                    android:id="@+id/location"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact"
+                    android:textSize="16dp"
+                    android:textColor="@color/mainTitle"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="20dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/retangle_edittext"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="5dp"
+                    android:hint="e.g. 010 43 50 42"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/mainTitle1"
+                    android:id="@+id/contact"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remark"
+                    android:textSize="16dp"
+                    android:textColor="@color/mainTitle"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="20dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/retangle_edittext"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="5dp"
+                    android:hint="e.g. This wallet contain my ID card ..."
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/mainTitle1"
+                    android:id="@+id/Remark"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/reward"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/star1"
+                            android:id="@+id/star"/>
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/staryellow"
+                            android:id="@+id/staryellow"
+                            android:visibility="gone"/>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reward for those who found your item? "
+                        android:textSize="16dp"
+                        android:layout_marginTop="30dp"
+                        android:textColor="@color/mainTitle1"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reward Description"
+                    android:textSize="16dp"
+                    android:textColor="@color/mainTitle"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone"
+                    android:id="@+id/des"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/retangle_edittext"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="5dp"
+                    android:hint="e.g. get 100$ if you found this wallet"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/mainTitle1"
+                    android:id="@+id/rewardDes"
+                    android:layout_marginBottom="20dp"
+                    android:visibility="gone"
+                    />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="35dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_login"
+                    android:text="Save"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"
+                    android:id="@+id/save"
+                    android:layout_marginBottom="20dp"/>
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/progress"
+                android:indeterminateDrawable="@drawable/progresscolor"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
