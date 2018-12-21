@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,12 +38,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText email, password;
     Button login;
     private FirebaseAuth mAuth;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -60,6 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
+        progressBar = findViewById(R.id.progress);
     }
 
     public void loginUser(String email, String password)
@@ -69,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    //progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
                     if(mAuth.getCurrentUser().isEmailVerified()) {
                         UserPreferences.save(LoginActivity.this, password);
                         Intent intent = new Intent(LoginActivity.this, PostingActivity.class);
@@ -92,11 +95,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 .OnPositiveClicked(new FancyAlertDialogListener() {
                                     @Override
                                     public void OnClick() {
+                                        progressBar.setVisibility(View.VISIBLE);
                                         mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful())
                                                 {
+                                                    progressBar.setVisibility(View.GONE);
                                                     Toast.makeText(LoginActivity.this, "Please Check Your Email to Verify", Toast.LENGTH_LONG).show();
                                                     mAuth.signOut();
                                                 }
@@ -116,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 else
                 {
-                    //progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
                     String message = task.getException().getMessage();
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
@@ -150,8 +155,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             else
                             {
                                 String message = task.getException().getMessage();
-                                Toast.makeText(LoginActivity.this, "Error Occure : " + message + " Please try again.", Toast.LENGTH_LONG
-                                ).show();
+                                Toast.makeText(LoginActivity.this, "Error Occure : " + message + " Please try again.", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -185,6 +189,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (TextUtils.isEmpty(email.getText()) || TextUtils.isEmpty(password.getText())) {
                 Toast.makeText(this, "Please Enter Require Information above !", Toast.LENGTH_SHORT).show();
             } else {
+                progressBar.setVisibility(View.VISIBLE);
                 loginUser(email.getText().toString().trim(), password.getText().toString().trim());
             }
         }

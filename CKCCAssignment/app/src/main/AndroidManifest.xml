@@ -20,10 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".RegisterActivity"
-            android:windowSoftInputMode="adjustResize|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".PostingActivity" />
         <activity android:name=".ProfileActivity" />
         <activity
@@ -31,7 +33,9 @@
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".LostFoundActivity" />
+        <activity
+            android:name=".LostFoundActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".SaveActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".EditEmailActivity" />
@@ -40,7 +44,11 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".EditPostActivity"></activity>
+        <activity
+            android:name=".EditPostActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".OtherProfileActivity"></activity>
     </application>
 
 </manifest>

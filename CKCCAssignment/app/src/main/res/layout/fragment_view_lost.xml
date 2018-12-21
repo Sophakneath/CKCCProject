@@ -106,6 +106,7 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/mainTitle1"
                 android:id="@+id/contact"
+                android:inputType="phone"
                 />
 
             <TextView

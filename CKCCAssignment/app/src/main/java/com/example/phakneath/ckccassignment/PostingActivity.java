@@ -1,6 +1,7 @@
 package com.example.phakneath.ckccassignment;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -64,6 +65,9 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     PostDiscoverFragment postDiscoverFragment = new PostDiscoverFragment();
     PostLostFragment postLostFragment = new PostLostFragment();
     FloatingActionButton add;
+    ViewPager viewPager;
+    SmartTabLayout viewPagerTab;
+    FragmentPagerItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +89,13 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
 
         getUser();
 
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Discover", PostDiscoverFragment.class)
-                .add("Lost", PostLostFragment.class)
-                .create());
+        setFragment();
+    }
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
-        viewPagerTab.setViewPager(viewPager);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setFragment();
     }
 
     public void initView()
@@ -111,6 +111,8 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         container = findViewById(R.id.container);
         search = findViewById(R.id.searchView);
         add = findViewById(R.id.add);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
     }
 
 
@@ -125,7 +127,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(new Intent(this, ProfileActivity.class));
         }
         else if(v == search) {
-
+            startActivity(new Intent(this,SearchActivity.class));
         }
         else if(v == add)
         {
@@ -143,6 +145,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 Intent intent = new Intent(PostingActivity.this, LoginActivity.class);
                 startActivity(intent);
+                dialog.dismiss();
                 finish();
             }
         }, 3000);
@@ -150,13 +153,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
 
     public void logoutDialog()
     {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.show(getFragmentManager(), "dialogLoading");
-            }
-        }, 500);
+        dialog.show(getFragmentManager(), "dialogLoading");
 
     }
 
@@ -214,7 +211,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         int id = item.getItemId();
         switch(id)
         {
-            case R.id.logout: logoutDialog(); signout(); dialog.dismiss();
+            case R.id.logout: logoutDialog(); signout();
                 break;
             case R.id.home: drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
@@ -224,5 +221,18 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
         return true;
+    }
+
+    public void setFragment()
+    {
+        adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add("Discover", PostDiscoverFragment.class)
+                .add("Lost", PostLostFragment.class)
+                .create());
+
+
+        viewPager.setAdapter(adapter);
+        viewPagerTab.setViewPager(viewPager);
     }
 }

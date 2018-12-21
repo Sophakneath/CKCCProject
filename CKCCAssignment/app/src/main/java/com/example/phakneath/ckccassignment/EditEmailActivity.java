@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,6 +93,7 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
                                                         PostingActivity.activity.finish();
                                                         ProfileActivity.activity.finish();
                                                         SettingActivity.activity.finish();
+                                                        dialog.dismiss();
                                                         Intent intent = new Intent(EditEmailActivity.this, LoginActivity.class);
                                                         startActivity(intent);
                                                         finish();
@@ -122,6 +124,8 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         if(v == save)
         {
+            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(save.getWindowToken(), 0);
             if(!user.getEmail().equals(email.getText().toString().trim()) && !TextUtils.isEmpty(email.getText().toString().trim()))
             new FancyAlertDialog.Builder(EditEmailActivity.this)
                     .setTitle("Verification")
@@ -138,14 +142,6 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
                         public void OnClick() {
                             dialog.show(getFragmentManager(), "dialogLoading");
                             changeEmail();
-                            final Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dialog.dismiss();
-                                }
-                            }, 2000);
-
                         }
                     })
                     .OnNegativeClicked(new FancyAlertDialogListener() {

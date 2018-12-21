@@ -19,12 +19,16 @@ import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +55,6 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         this.context = context;
         this.lostFounds = lostFounds;
         this.uID = uID;
-    }
-
-    public void setSaves(List<LostFound> saves)
-    {
-        this.saves = saves;
     }
 
     @NonNull
@@ -177,18 +176,39 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
 
     public void onSave(LostFound lostFound, ImageView a, ImageView b)
     {
-        a.setVisibility(View.VISIBLE);
-        b.setVisibility(View.GONE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).setValue(lostFound);
+        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                a.setVisibility(View.VISIBLE);
+                b.setVisibility(View.GONE);
+                Toast.makeText(context, "Save Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void onUnSave(LostFound lostFound, ImageView a, ImageView b)
     {
-        a.setVisibility(View.GONE);
-        b.setVisibility(View.VISIBLE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue();
+        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                a.setVisibility(View.GONE);
+                b.setVisibility(View.VISIBLE);
+                Toast.makeText(context, "Unsave Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void getSaves(ImageView a, ImageView b, LostFound lf)

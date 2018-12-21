@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,12 +40,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     CircleImageView profile;
     ImageView more, star, picture;
     LostFound lostFound;
-    RelativeLayout save, share;
+    RelativeLayout save, share, gotoProfile;
     User user;
     PostingActivity postingActivity = new PostingActivity();
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
+    int count;
+    ImageView onSave, notsave;
+    List<LostFound> saves;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
+        save.setOnClickListener(this::onClick);
+        gotoProfile.setOnClickListener(this::onClick);
         getUser();
     }
 
@@ -87,6 +95,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         if(user != null) updateUI(lostFound, user);
+        getSaves(lostFound);
     }
 
     public void updateUI(LostFound lostFound, User user)
@@ -133,10 +142,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                             default:
                                 return false;
                         }
-
                     }
                 });
-
                 menu.show();
             }
         });
@@ -156,16 +163,38 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(lostFound.getId().startsWith("F")) {
-            mDatabase.child("user").child("id").child(uid).child("founds").child(lostFound.getId()).removeValue();
-            mDatabase.child("Posting").child("founds").child(lostFound.getId()).removeValue();
+            mDatabase.child("user").child("id").child(uid).child("founds").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    mDatabase.child("Posting").child("founds").child(lostFound.getId()).removeValue();
+                    mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue();
+                    finish();
+                    Toast.makeText(DetailActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         else if(lostFound.getId().startsWith("L"))
         {
-            mDatabase.child("user").child("id").child(uid).child("losts").child(lostFound.getId()).removeValue();
-            mDatabase.child("Posting").child("losts").child(lostFound.getId()).removeValue();
+            mDatabase.child("user").child("id").child(uid).child("losts").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    mDatabase.child("Posting").child("losts").child(lostFound.getId()).removeValue();
+                    mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId());
+                    finish();
+                    Toast.makeText(DetailActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });;
         }
-        finish();
-        Toast.makeText(DetailActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
     }
 
     public void reloadLists()
@@ -223,6 +252,139 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         save = findViewById(R.id.save);
         share = findViewById(R.id.shareTo);
         picture = findViewById(R.id.picture);
+        onSave = findViewById(R.id.onsave);
+        notsave = findViewById(R.id.notsave);
+        gotoProfile = findViewById(R.id.gotoProfile);
+    }
+
+    public void getSaves(LostFound lf)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = mDatabase.child("user").child("id").child(uid);
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                List<LostFound> savess = new ArrayList<>();
+                LostFound lostFound = new LostFound();
+
+                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
+                {
+                    lostFound = d.getValue(LostFound.class);
+                    savess.add(lostFound);
+                }
+
+                saves = savess;
+
+                if(savess.size() >0)
+                    for (LostFound l: savess) {
+                        if(l.getId().equals(lf.getId()))
+                        {
+                            onSave.setVisibility(View.VISIBLE);
+                            notsave.setVisibility(View.GONE);
+                            count = 1;
+                        }
+                    }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void onSave(LostFound lostFound)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                onSave.setVisibility(View.VISIBLE);
+                notsave.setVisibility(View.GONE);
+                Toast.makeText(DetailActivity.this, "Save Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void onUnSave(LostFound lostFound)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                onSave.setVisibility(View.GONE);
+                notsave.setVisibility(View.VISIBLE);
+                Toast.makeText(DetailActivity.this, "Unsave Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void myOwnProfile()
+    {
+        startActivity(new Intent(this, ProfileActivity.class));
+    }
+
+    public void otherProfile(User user)
+    {
+        Intent intent = new Intent(this, OtherProfileActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("otherUser", user);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    public void getOtherProfile()
+    {
+        User otherUser = new User();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child("id").child(lostFound.getMyOwner()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String tusername= dataSnapshot.child("username").getValue(String.class);
+                String timagepath = dataSnapshot.child("imagePath").getValue(String.class);
+                String textension = dataSnapshot.child("extension").getValue(String.class);
+                String tphoneNum = dataSnapshot.child("phoneNum").getValue(String.class);
+                String temail = dataSnapshot.child("email").getValue(String.class);
+
+                List<LostFound> tlosts = new ArrayList<>();
+                List<LostFound> tfounds = new ArrayList<>();
+                LostFound lostFound = new LostFound();
+                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                    lostFound = d.getValue(LostFound.class);
+                    tlosts.add(lostFound);
+                }
+                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
+                    lostFound = d.getValue(LostFound.class);
+                    tfounds.add(lostFound);
+                }
+
+                otherUser.setUsername(tusername);
+                otherUser.setImagePath(timagepath);
+                otherUser.setExtension(textension);
+                otherUser.setPhoneNum(tphoneNum);
+                otherUser.setEmail(temail);
+                otherUser.setLosts(tlosts);
+                otherUser.setFounds(tfounds);
+                otherProfile(otherUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -230,6 +392,30 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         if(v == back)
         {
             finish();
+        }
+        else if(v == save)
+        {
+            if(count == 0)
+            {
+                count = 1;
+                onSave(lostFound);
+            }
+            else if(count == 1)
+            {
+                count = 0;
+                onUnSave(lostFound);
+            }
+        }
+        else if(v == gotoProfile)
+        {
+            if(lostFound.getMyOwner().equals(uid))
+            {
+                myOwnProfile();
+            }
+            else
+            {
+                getOtherProfile();
+            }
         }
     }
 }

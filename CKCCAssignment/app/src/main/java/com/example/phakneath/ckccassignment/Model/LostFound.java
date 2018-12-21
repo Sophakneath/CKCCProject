@@ -11,9 +11,11 @@ public class LostFound implements Serializable {
     private String remark;
     private String reward;
     private String myOwner;
+    private String image;
+    private String extension;
 
     public LostFound(){}
-    public LostFound(String id, String item, String location, String contactNum, String remark, String reward, String myOwner) {
+    public LostFound(String id, String item, String location, String contactNum, String remark, String reward, String myOwner, String image, String extension) {
         this.id = id;
         this.item = item;
         this.location = location;
@@ -21,6 +23,8 @@ public class LostFound implements Serializable {
         this.remark = remark;
         this.reward = reward;
         this.myOwner = myOwner;
+        this.image = image;
+        this.extension = extension;
     }
 
     public String getId() {
@@ -77,5 +81,21 @@ public class LostFound implements Serializable {
 
     public void setMyOwner(String myOwner) {
         this.myOwner = myOwner;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 }

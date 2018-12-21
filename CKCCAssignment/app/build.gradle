@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-database:16.0.2'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
+    implementation 'com.firebaseui:firebase-ui-database:4.2.0'
 
     implementation 'com.github.Shashank02051997:FancyAlertDialog-Android:0.1'
     implementation 'br.com.forusers.heinsinputdialogs:input-dialogs-library:0.1.4'

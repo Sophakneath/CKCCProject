@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -213,7 +214,19 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if(mUploadTask == null || !mUploadTask.isInProgress()) {
             uploadImage(uri, user, imagePath, extension);
         }
-        editUsers(uID, user);
+        if(mUploadTask != null)
+        mUploadTask.addOnCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                editUsers(uID, user);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(SettingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        else editUsers(uID, user);
     }
 
     public void editUsers(String uID, User user)
@@ -222,19 +235,25 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if(!username.getText().toString().equals(user.getUsername()) || !phoneNum.getText().toString().equals(user.getPhoneNum()))
         {
             mDatabase = FirebaseDatabase.getInstance().getReference();
-            mDatabase.child("user").child("id").child(uID).child("username").setValue(username.getText().toString());
-            mDatabase.child("user").child("id").child(uID).child("phoneNum").setValue(phoneNum.getText().toString());
+            mDatabase.child("user").child("id").child(uID).child("username").setValue(username.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    mDatabase.child("user").child("id").child(uID).child("phoneNum").setValue(phoneNum.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(uri != null || !username.getText().toString().equals(user.getUsername()) || !phoneNum.getText().toString().equals(user.getPhoneNum())) Toast.makeText(SettingActivity.this, " Changed Successfully", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
+            });
         }
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-                if(uri != null || !username.getText().toString().equals(user.getUsername()) || !phoneNum.getText().toString().equals(user.getPhoneNum())) Toast.makeText(SettingActivity.this, " Changed Successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }, 2000);
+        else
+        {
+            dialog.dismiss();
+            finish();
+        }
     }
 
     @Override
@@ -245,6 +264,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
        }
        else if(v == save)
        {
+           InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+           imm.hideSoftInputFromWindow(save.getWindowToken(), 0);
            dialog.show(getFragmentManager(), "dialogLoading");
            updateInformationUser(uID, pathImage, extension, user);
        }

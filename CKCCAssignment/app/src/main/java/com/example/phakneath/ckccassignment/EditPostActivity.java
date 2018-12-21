@@ -2,10 +2,13 @@ package com.example.phakneath.ckccassignment;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,6 +51,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_post);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         initView();
         getLostFound();
@@ -122,18 +129,41 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, items,loc,con,rem,rewardDes, uID);
+        LostFound lostFound = new LostFound(id, items,loc,con,rem,rewardDes, uID, null, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(lostFound.getId().startsWith("F"))
         {
-            mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound);
-            mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
+            mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
+                    finish();
+                    Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
         else if(lostFound.getId().startsWith("L"))
         {
-            mDatabase.child("user").child("id").child(uID).child("losts").child(id).setValue(lostFound);
-            mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
+            mDatabase.child("user").child("id").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
+                    finish();
+                    Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -146,14 +176,6 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         else
         {
             updateUser();
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            }, 2000);
-            Toast.makeText(this, "Edit Successfull", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -175,6 +197,8 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         }
         else if(v == save)
         {
+            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(save.getWindowToken(), 0);
             verifyUpdate();
         }
         else if(v == back)

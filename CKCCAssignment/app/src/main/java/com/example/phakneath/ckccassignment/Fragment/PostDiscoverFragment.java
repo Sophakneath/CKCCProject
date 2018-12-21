@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
@@ -19,6 +20,9 @@ import com.example.phakneath.ckccassignment.EditPostActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -147,13 +151,13 @@ public class PostDiscoverFragment extends Fragment implements foundListAdapter.o
     public void getUser()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("founds");
+        mDatabase = mDatabase.child("Posting");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> allFoundPosts = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     allFoundPosts.add(lostFound);
                 }
@@ -163,34 +167,6 @@ public class PostDiscoverFragment extends Fragment implements foundListAdapter.o
                 foundListAdapter.editPost = PostDiscoverFragment.this::onEditPost;
                 foundListAdapter.deletePosts = PostDiscoverFragment.this::onDeletePosts;
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void getSaves()
-    {
-        user = new User();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(uid);
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                List<LostFound> saves = new ArrayList<>();
-                LostFound lostFound = new LostFound();
-
-                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
-                {
-                    lostFound = d.getValue(LostFound.class);
-                    saves.add(lostFound);
-                }
-
-                foundListAdapter.setSaves(saves);
             }
 
             @Override
@@ -212,8 +188,20 @@ public class PostDiscoverFragment extends Fragment implements foundListAdapter.o
     public void delete(LostFound lostFound)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("founds").child(lostFound.getId()).removeValue();
-        mDatabase.child("Posting").child("founds").child(lostFound.getId()).removeValue();
+        mDatabase.child("user").child("id").child(uid).child("founds").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                mDatabase.child("Posting").child("founds").child(lostFound.getId()).removeValue();
+                mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue();
+                Toast.makeText(getContext(), "Delete Successful", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

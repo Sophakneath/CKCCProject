@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,13 +39,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private String id, name, myEmail, myPhoneNum;
     private String receiveToken, receiveEmail;
     DatabaseReference mDatabase;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_register);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -62,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         password = findViewById(R.id.password);
         signup = findViewById(R.id.signup);
         gotoLogin = findViewById(R.id.gotoLogin);
+        progressBar = findViewById(R.id.progress);
     }
 
     public void createNewUser(String email, String password)
@@ -70,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    //progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
                     receiveToken = mAuth.getCurrentUser().getIdToken(true).toString();
                     receiveEmail = mAuth.getCurrentUser().getEmail().toString();
                     Toast.makeText(RegisterActivity.this,"Register successfull", Toast.LENGTH_SHORT).show();
@@ -92,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             .OnPositiveClicked(new FancyAlertDialogListener() {
                                 @Override
                                 public void OnClick() {
+                                    progressBar.setVisibility(View.VISIBLE);
                                     mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -100,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                 Toast.makeText(RegisterActivity.this, "Please Check Your Email to Verify", Toast.LENGTH_LONG).show();
                                                 mAuth.signOut();
                                                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                                progressBar.setVisibility(View.GONE);
                                                 finish();
                                             }
                                         }
@@ -109,7 +115,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             .OnNegativeClicked(new FancyAlertDialogListener() {
                                 @Override
                                 public void OnClick() {
-
                                 }
                             }).build();
                 }else{
@@ -138,9 +143,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         if(v == signup)
         {
+            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(signup.getWindowToken(), 0);
             if (TextUtils.isEmpty(email.getText()) || TextUtils.isEmpty(username.getText()) || TextUtils.isEmpty(password.getText()) || TextUtils.isEmpty(phoneNum.getText())) {
                 Toast.makeText(this, "Please Enter All Require Information above !", Toast.LENGTH_SHORT).show();
             } else {
+                progressBar.setVisibility(View.VISIBLE);
                 createNewUser(email.getText().toString().trim(), password.getText().toString().trim());
             }
 

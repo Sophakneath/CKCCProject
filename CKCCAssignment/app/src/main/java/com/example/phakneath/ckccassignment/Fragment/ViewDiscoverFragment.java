@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,8 +39,10 @@ import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.PostingActivity;
 import com.example.phakneath.ckccassignment.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -143,6 +146,8 @@ public class ViewDiscoverFragment extends Fragment {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(post.getWindowToken(), 0);
                 verifyUpdate();
             }
         });
@@ -419,11 +424,22 @@ public class ViewDiscoverFragment extends Fragment {
         String con = contact.getText().toString();
         String rem = remark.getText().toString();
         String id = "F" + uID + System.currentTimeMillis();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, null, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound);
-        mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
+        mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
+                Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Post Unsuccessfull", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void verifyUpdate()

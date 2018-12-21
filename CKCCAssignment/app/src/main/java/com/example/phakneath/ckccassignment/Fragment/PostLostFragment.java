@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Adapter.lostListAdapter;
@@ -20,6 +21,9 @@ import com.example.phakneath.ckccassignment.EditPostActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -158,13 +162,13 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
     public void getUser()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("losts");
+        mDatabase = mDatabase.child("Posting");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> allLostPosts = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     allLostPosts.add(lostFound);
                 }
@@ -194,8 +198,19 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
     public void delete(LostFound lostFound)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("losts").child(lostFound.getId()).removeValue();
-        mDatabase.child("Posting").child("losts").child(lostFound.getId()).removeValue();
+        mDatabase.child("user").child("id").child(uid).child("losts").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                mDatabase.child("Posting").child("losts").child(lostFound.getId()).removeValue();
+                mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue();
+                Toast.makeText(getContext(), "Delete Successful", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

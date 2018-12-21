@@ -56,37 +56,6 @@
                 android:layout_marginRight="8dp"
                 />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:id="@+id/linear">
-
-                <android.support.v7.widget.SearchView
-                    android:id="@+id/search"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@color/white"
-                    android:visibility="gone">
-
-                </android.support.v7.widget.SearchView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cancel"
-                    android:id="@+id/cancel"
-                    android:layout_marginRight="20dp"
-                    android:textSize="17dp"
-                    android:textColor="@color/white"
-                    android:visibility="gone"
-                    android:layout_marginTop="7dp"/>
-            </LinearLayout>
-
         </LinearLayout>
 
     </RelativeLayout>
