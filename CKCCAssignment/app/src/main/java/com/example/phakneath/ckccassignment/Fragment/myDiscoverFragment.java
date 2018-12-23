@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
 import com.example.phakneath.ckccassignment.DetailActivity;
 import com.example.phakneath.ckccassignment.EditPostActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.ProfileActivity;
 import com.example.phakneath.ckccassignment.R;
@@ -58,6 +60,8 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
     User user;
     FirebaseAuth mAuth;
     String uid;
+    ProgressBar progressBar;
+    TextView noPost;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -103,6 +107,9 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
         uid = mAuth.getCurrentUser().getUid();
         View view = inflater.inflate(R.layout.fragment_post_found, container, false);
         foundList = view.findViewById(R.id.container);
+        progressBar = view.findViewById(R.id.progress);
+        progressBar.setVisibility(View.VISIBLE);
+        noPost = view.findViewById(R.id.notpost);
 
         getUser();
         return view;
@@ -132,8 +139,11 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
         mListener = null;
     }
 
-    public void setAdapter(List<LostFound> lostFounds, User user, List<LostFound> saves)
+    public void setAdapter(List<LostFound> lostFounds, User user, List<SaveLostFound> saves)
     {
+        progressBar.setVisibility(View.GONE);
+        if(lostFounds.size() <= 0) noPost.setVisibility(View.VISIBLE);
+        else noPost.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         foundList.setLayoutManager(layoutManager);
         myFoundAdapter = new myFoundAdapter(getContext(), lostFounds, user, saves);
@@ -157,7 +167,7 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
     {
         user = new User();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(uid);
+        mDatabase = mDatabase.child("user").child(uid);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -167,10 +177,36 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
                 String tphoneNum = dataSnapshot.child("phoneNum").getValue(String.class);
                 String temail = dataSnapshot.child("email").getValue(String.class);
 
+                user.setUsername(tusername);
+                user.setImagePath(timagepath);
+                user.setExtension(textension);
+                user.setPhoneNum(tphoneNum);
+                user.setEmail(temail);
+                //user.setLosts(tlosts);
+                //user.setFounds(tfounds);
+                //lostFounds = update(user);
+                getDiscover(user);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getDiscover(User user)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = mDatabase.child("Posting").child("individual").child(uid);
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> tlosts = new ArrayList<>();
                 List<LostFound> tfounds = new ArrayList<>();
-                List<LostFound> saves = new ArrayList<>();
+                List<SaveLostFound> saves = new ArrayList<>();
                 LostFound lostFound = new LostFound();
+                SaveLostFound saveLostFound = new SaveLostFound();
                 for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tlosts.add(lostFound);
@@ -181,19 +217,11 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
                 }
                 for(DataSnapshot d: dataSnapshot.child("save").getChildren())
                 {
-                    lostFound = d.getValue(LostFound.class);
-                    saves.add(lostFound);
+                    saveLostFound = d.getValue(SaveLostFound.class);
+                    saves.add(saveLostFound);
                 }
 
-                user.setUsername(tusername);
-                user.setImagePath(timagepath);
-                user.setExtension(textension);
-                user.setPhoneNum(tphoneNum);
-                user.setEmail(temail);
-                user.setLosts(tlosts);
-                user.setFounds(tfounds);
-                lostFounds = update(user);
-                setAdapter(lostFounds, user, saves);
+                setAdapter(tfounds, user, saves);
                 myFoundAdapter.openDetail = myDiscoverFragment.this::onOpenDetailFound;
                 myFoundAdapter.editPost = myDiscoverFragment.this::onEditPost;
                 myFoundAdapter.deletePosts = myDiscoverFragment.this::onDeletePosts;
@@ -226,12 +254,13 @@ public class myDiscoverFragment extends Fragment implements myFoundAdapter.openD
 
     public void delete(LostFound lostFound)
     {
+        String id = lostFound.getId();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("founds").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("founds").child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                mDatabase.child("Posting").child("founds").child(lostFound.getId()).removeValue();
-                mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue();
+                mDatabase.child("Posting").child("founds").child(id).removeValue();
+                mDatabase.child("Posting").child("individual").child(uid).child("save").child(id).removeValue();
                 Toast.makeText(getContext(), "Delete Successful", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {

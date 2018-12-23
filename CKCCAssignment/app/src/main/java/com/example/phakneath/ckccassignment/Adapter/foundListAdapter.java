@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageTask;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
     private String uID;
     public myLostAdapter.editPost editPost;
     public deletePosts deletePosts;
-    public List<LostFound> saves = new ArrayList<>();
+    public List<SaveLostFound> saves = new ArrayList<>();
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
@@ -77,7 +79,10 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         if(lostFound.getMyOwner().equals(uID)) holder.more.setVisibility(View.VISIBLE);
 
         //Toast.makeText(context, saves.size(), Toast.LENGTH_SHORT).show();
-        getSaves(holder.onSave, holder.notsave, lostFounds.get(position));
+        SaveLostFound saveLostFound = new SaveLostFound();
+        saveLostFound.setId(lostFound.getId());
+        saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+        getSaves(holder.onSave, holder.notsave, saveLostFound);
 
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,19 +120,33 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
             }
         });
 
-        holder.save.setOnClickListener(new View.OnClickListener() {
+        /*holder.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(count == 0)
                 {
                     count = 1;
-                    onSave(lostFounds.get(position), holder.onSave,holder.notsave);
+                    onSave(saveLostFound, holder.onSave,holder.notsave);
                 }
                 else if(count == 1)
                 {
                     count = 0;
-                    onUnSave(lostFounds.get(position), holder.onSave, holder.notsave);
+                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
                 }
+            }
+        });*/
+
+        holder.onSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onUnSave(saveLostFound, holder.onSave, holder.notsave);
+            }
+        });
+
+        holder.notsave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });
     }
@@ -174,10 +193,10 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         public void onDeletePosts(LostFound lostFound);
     }
 
-    public void onSave(LostFound lostFound, ImageView a, ImageView b)
+    public void onSave(SaveLostFound lostFound, ImageView a, ImageView b)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 a.setVisibility(View.VISIBLE);
@@ -192,10 +211,10 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         });
     }
 
-    public void onUnSave(LostFound lostFound, ImageView a, ImageView b)
+    public void onUnSave(SaveLostFound lostFound, ImageView a, ImageView b)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 a.setVisibility(View.GONE);
@@ -211,32 +230,32 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
 
     }
 
-    public void getSaves(ImageView a, ImageView b, LostFound lf)
+    public void getSaves(ImageView a, ImageView b, SaveLostFound lf)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(uid);
+        mDatabase = mDatabase.child("Posting").child("individual").child(uid).child("save");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                List<LostFound> savess = new ArrayList<>();
-                LostFound lostFound = new LostFound();
+                List<SaveLostFound> savess = new ArrayList<>();
+                SaveLostFound lostFound = new SaveLostFound();
 
-                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
+                for(DataSnapshot d: dataSnapshot.getChildren())
                 {
-                    lostFound = d.getValue(LostFound.class);
+                    lostFound = d.getValue(SaveLostFound.class);
                     savess.add(lostFound);
                 }
 
                 saves = savess;
 
                 if(saves.size() >0)
-                    for (LostFound l: saves) {
+                    for (SaveLostFound l: saves) {
                         if(l.getId().equals(lf.getId()))
                         {
                             a.setVisibility(View.VISIBLE);
                             b.setVisibility(View.GONE);
-                            count = 1;
+                            //count = 1;
                         }
                     }
             }

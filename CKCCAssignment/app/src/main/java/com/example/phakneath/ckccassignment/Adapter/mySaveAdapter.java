@@ -16,26 +16,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder> {
 
     private Context context;
-    private List<LostFound> saves;
+    private List<SaveLostFound> saves;
     public openDetail openDetail;
-    int count = 1;
+    int count;
     String uid;
     DatabaseReference mDatabase;
+    List<LostFound> lostFounds;
 
-    public mySaveAdapter(Context context, List<LostFound> saves, String uid)
+
+    public mySaveAdapter(Context context, List<SaveLostFound> saves, String uid)
     {
         this.context = context;
         this.saves = saves;
@@ -51,29 +58,23 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull mySaveAdapter.ViewHolder holder, int position) {
-        LostFound lostFound = saves.get(position);
-        if(lostFound.getId().startsWith("F")) holder.found.setText("Found : " + lostFound.getItem());
-        else  if(lostFound.getId().startsWith("L")) holder.found.setText("Lost : " + lostFound.getItem());
-
+        SaveLostFound lostFound = saves.get(position);
+        getSaveLostFound(lostFound, holder.found, holder.location, holder.contact, holder.star, holder.container);
         holder.more.setVisibility(View.GONE);
-        holder.location.setText("Location : " + lostFound.getLocation());
-        holder.contact.setText("Contact : " + lostFound.getContactNum());
-        if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDetail.onOpenDetail(saves.get(position));
-            }
-        });
-
         holder.onSave.setVisibility(View.VISIBLE);
         holder.notsave.setVisibility(View.GONE);
 
         holder.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onUnSave(saves.get(position));
+                onUnSave(lostFound);
+            }
+        });
+
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDetail.onOpenDetail(lostFound);
             }
         });
     }
@@ -112,13 +113,13 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
 
     public interface openDetail
     {
-        public void onOpenDetail(LostFound lostFound);
+        public void onOpenDetail(SaveLostFound lostFound);
     }
 
-    public void onUnSave(LostFound lostFound)
+    public void onUnSave(SaveLostFound lostFound)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(context, "Unsave Successfull", Toast.LENGTH_SHORT).show();
@@ -131,4 +132,80 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
         });
     }
 
+    public void getSaveLostFound(SaveLostFound saveLostFound, TextView found, TextView location, TextView contact, ImageView star, CardView container)
+    {
+        if(saveLostFound.getId().startsWith("F"))
+        {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("founds").child(saveLostFound.getId()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    lostFounds = new ArrayList<>();
+                    LostFound lostFound = dataSnapshot.getValue(LostFound.class);
+                    lostFounds.add(lostFound);
+
+                    if(lostFound != null) {
+                        found.setText("Found : " + lostFound.getItem());
+                        location.setText("Location : " + lostFound.getLocation());
+                        contact.setText("Contact : " + lostFound.getContactNum());
+                        if (lostFound.getReward() != null) star.setVisibility(View.VISIBLE);
+                        //Toast.makeText(context, "not found", Toast.LENGTH_SHORT).show();
+                        //count = 1;
+                    }
+                    else
+                    {
+                        //Toast.makeText(context, "not found", Toast.LENGTH_SHORT).show();
+                        found.setText("Post not found or maybe user have already delete this post.");
+                        found.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        location.setVisibility(View.GONE);
+                        contact.setVisibility(View.GONE);
+                        star.setVisibility(View.GONE);
+                        container.setClickable(false);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else if(saveLostFound.getId().startsWith("L"))
+        {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("losts").child(saveLostFound.getId()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    lostFounds = new ArrayList<>();
+                    LostFound lostFound = dataSnapshot.getValue(LostFound.class);
+                    lostFounds.add(lostFound);
+
+                    if(lostFound != null) {
+                        found.setText("Lost : " + lostFound.getItem());
+                        location.setText("Location : " + lostFound.getLocation());
+                        contact.setText("Contact : " + lostFound.getContactNum());
+                        if (lostFound.getReward() != null) star.setVisibility(View.VISIBLE);
+                        //count = 1;
+                    }
+                    else
+                    {
+                        found.setText("Post not found or maybe user have already delete this post.");
+                        found.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        location.setVisibility(View.GONE);
+                        contact.setVisibility(View.GONE);
+                        star.setVisibility(View.GONE);
+                        container.setClickable(false);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
 }

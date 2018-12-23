@@ -5,8 +5,10 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
@@ -15,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -88,7 +91,6 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         add.setOnClickListener(this::onClick);
 
         getUser();
-
         setFragment();
     }
 
@@ -160,7 +162,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     public void getUser()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(id);
+        mDatabase = mDatabase.child("user").child(id);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -219,20 +221,22 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.privacy: startActivity(new Intent(this, PrivacyPolicyActivity.class));
                 break;
+            case R.id.about: startActivity(new Intent(this, AboutActivity.class));
+                break;
         }
         return true;
     }
 
     public void setFragment()
     {
-        adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Discover", PostDiscoverFragment.class)
-                .add("Lost", PostLostFragment.class)
-                .create());
-
-
-        viewPager.setAdapter(adapter);
+        setupViewPager(viewPager);
         viewPagerTab.setViewPager(viewPager);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        OtherProfileActivity.ViewPagerAdapter adapter = new OtherProfileActivity.ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(postDiscoverFragment, "DISCOVER");
+        adapter.addFrag(postLostFragment, "LOST");
+        viewPager.setAdapter(adapter);
     }
 }

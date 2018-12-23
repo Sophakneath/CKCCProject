@@ -18,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +31,9 @@ import com.shashank.sony.fancydialoglib.Animation;
 import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
 import com.shashank.sony.fancydialoglib.Icon;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -133,10 +138,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         name = username.getText().toString().trim();
         myEmail = email.getText().toString().trim();
         myPhoneNum = phoneNum.getText().toString().trim();
+        List<LostFound> founds = new ArrayList<>();
+        List<LostFound> losts = new ArrayList<>();
+        List<SaveLostFound> saves = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        User user = new User(id,name,myEmail,myPhoneNum,null,null, null, null,null);
-        mDatabase.child("user").child("id").child(id).setValue(user);
+        User user = new User(id,name,myEmail,myPhoneNum,losts,founds, null, null,saves);
+        mDatabase.child("user").child(id).setValue(user);
     }
 
     @Override

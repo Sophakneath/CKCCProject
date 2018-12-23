@@ -427,16 +427,16 @@ public class ViewDiscoverFragment extends Fragment {
         LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, null, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
-                Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity().getBaseContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Post Unsuccessfull", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getBaseContext(), "Post Unsuccessfull", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
-import com.example.phakneath.ckccassignment.Adapter.lostListAdapter;
 import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
+import com.example.phakneath.ckccassignment.Adapter.otherLostAdapter;
 import com.example.phakneath.ckccassignment.DetailActivity;
 import com.example.phakneath.ckccassignment.EditPostActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
@@ -39,24 +39,21 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PostLostFragment.OnFragmentInteractionListener} interface
+ * {@link otherLostFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PostLostFragment#newInstance} factory method to
+ * Use the {@link otherLostFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PostLostFragment extends Fragment implements lostListAdapter.openDetail, myLostAdapter.editPost, foundListAdapter.deletePosts{
+public class otherLostFragment extends Fragment implements otherLostAdapter.openDetail{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     RecyclerView lostList;
-    List<LostFound> lostFounds;
-    lostListAdapter lostListAdapter;
+    otherLostAdapter otherLostAdapter;
     User user;
-    DatabaseReference mDatabase;
-    FirebaseAuth mAuth;
-    String uid;
-    ProgressBar progressBaរ;
+    List<LostFound> lostFounds = new ArrayList<>();
+    ProgressBar progressBar;
     TextView noPost;
 
     // TODO: Rename and change types of parameters
@@ -65,7 +62,7 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
 
     private OnFragmentInteractionListener mListener;
 
-    public PostLostFragment() {
+    public otherLostFragment() {
         // Required empty public constructor
     }
 
@@ -78,8 +75,8 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
      * @return A new instance of fragment PostLostFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PostLostFragment newInstance(String param1, String param2) {
-        PostLostFragment fragment = new PostLostFragment();
+    public static otherLostFragment newInstance(String param1, String param2) {
+        otherLostFragment fragment = new otherLostFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -99,25 +96,17 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
         View view = inflater.inflate(R.layout.fragment_post_lost, container, false);
         lostList = view.findViewById(R.id.container);
-        progressBaរ = view.findViewById(R.id.progress);
-        progressBaរ.setVisibility(View.VISIBLE);
-        noPost = view. findViewById(R.id.notpost);
+        progressBar = view.findViewById(R.id.progress);
+        progressBar.setVisibility(View.VISIBLE);
+        noPost = view.findViewById(R.id.notpost);
 
-        /*lostFounds = new ArrayList<>();
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Bag", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-
-        setAdapter();
-        lostListAdapter.openDetail = this::onOpenDetailLostPost;*/
-        getUser();
+        user = (User) getArguments().getSerializable("founds");
+        if(user.getLosts() != null) lostFounds = user.getLosts();
+        setAdapter(lostFounds);
+        otherLostAdapter.openDetail = otherLostFragment.this::onOpenDetailLostPost;
+        //getUser();
         return view;
     }
 
@@ -141,14 +130,13 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
 
     public void setAdapter(List<LostFound> lostFounds)
     {
-        progressBaរ.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         if(lostFounds.size() <= 0) noPost.setVisibility(View.VISIBLE);
         else noPost.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         lostList.setLayoutManager(layoutManager);
-        lostListAdapter = new lostListAdapter(getContext(), lostFounds, uid);
-        lostList.setAdapter(lostListAdapter);
-        //getSaves();
+        otherLostAdapter = new otherLostAdapter(getContext(), lostFounds);
+        lostList.setAdapter(otherLostAdapter);
     }
 
     @Override
@@ -169,76 +157,6 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
         startActivity(intent);
     }
 
-    public void getUser()
-    {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting");
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<LostFound> allLostPosts = new ArrayList<>();
-                LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    allLostPosts.add(lostFound);
-                }
-
-                setAdapter(allLostPosts);
-                lostListAdapter.openDetail = PostLostFragment.this::onOpenDetailLostPost;
-                lostListAdapter.editPost = PostLostFragment.this::onEditPost;
-                lostListAdapter.deletePosts = PostLostFragment.this::onDeletePosts;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    public void onEditPost(LostFound lostFound) {
-        Intent intent = new Intent(getContext(), EditPostActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("data", lostFound);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
-    public void delete(LostFound lostFound)
-    {
-        String id = lostFound.getId();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Posting").child("individual").child(uid).child("losts").child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                mDatabase.child("Posting").child("losts").child(id).removeValue();
-                mDatabase.child("Posting").child("individual").child(uid).child("save").child(id).removeValue();
-                Toast.makeText(getContext(), "Delete Successful", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    @Override
-    public void onDeletePosts(LostFound lostFound) {
-        delete(lostFound);
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

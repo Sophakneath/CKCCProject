@@ -16,11 +16,11 @@ public class User implements Serializable {
     private List<LostFound> founds;
     private String imagePath;
     private String extension;
-    private List<LostFound> save;
+    private List<SaveLostFound> save;
 
     public User(){}
 
-    public User(String id, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension, List<LostFound> save) {
+    public User(String id, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension, List<SaveLostFound> save) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -96,11 +96,11 @@ public class User implements Serializable {
         this.extension = extension;
     }
 
-    public List<LostFound> getSave() {
+    public List<SaveLostFound> getSave() {
         return save;
     }
 
-    public void setSave(List<LostFound> save) {
+    public void setSave(List<SaveLostFound> save) {
         this.save = save;
     }
     }

@@ -24,6 +24,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shashank.sony.fancydialoglib.Animation;
 import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
@@ -39,6 +41,8 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
     private FirebaseAuth mAuth;
     FirebaseUser user;
     LoadingDialog dialog = new LoadingDialog();
+    DatabaseReference mDatabase;
+    String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,7 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         mAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = mAuth.getCurrentUser().getUid();
         save.setOnClickListener(this::onClick);
         email.setText(user.getEmail().toString());
         email.setSelection(email.getText().length());
@@ -94,6 +99,8 @@ public class EditEmailActivity extends AppCompatActivity implements View.OnClick
                                                         ProfileActivity.activity.finish();
                                                         SettingActivity.activity.finish();
                                                         dialog.dismiss();
+                                                        mDatabase = FirebaseDatabase.getInstance().getReference();
+                                                        mDatabase.child("user").child(uid).child("email").setValue(email.getText().toString());
                                                         Intent intent = new Intent(EditEmailActivity.this, LoginActivity.class);
                                                         startActivity(intent);
                                                         finish();

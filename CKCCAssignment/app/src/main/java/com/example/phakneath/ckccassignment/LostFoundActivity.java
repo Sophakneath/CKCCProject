@@ -47,6 +47,7 @@ import com.google.firebase.storage.UploadTask;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
+import com.example.phakneath.ckccassignment.OtherProfileActivity.ViewPagerAdapter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,6 +59,8 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
     CircleImageView back;
     TextView post;
     public static Activity activity;
+    ViewPager viewPager;
+    SmartTabLayout viewPagerTab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,17 +73,7 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         activity = this;
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         back.setOnClickListener(this::onClick);
-
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Discover", ViewDiscoverFragment.class)
-                .add("Lost", ViewLostFragment.class)
-                .create());
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        setupViewPager(viewPager);
         viewPagerTab.setViewPager(viewPager);
     }
 
@@ -89,6 +82,8 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         container = findViewById(R.id.container);
         back = findViewById(R.id.back);
         post = findViewById(R.id.posting);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab= (SmartTabLayout) findViewById(R.id.viewpagertab);
     }
 
     @Override
@@ -128,5 +123,12 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         bundle.putSerializable("data", lostFound);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(viewDiscoverFragment, "DISCOVER");
+        adapter.addFrag(viewLostFragment, "LOST");
+        viewPager.setAdapter(adapter);
     }
 }

@@ -47,11 +47,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     PostingActivity postingActivity = new PostingActivity();
     User user;
     RecyclerView container;
-    mySaveAdapter mySaveAdapter;
+    myDiscoverFragment myDiscoverFragment = new myDiscoverFragment();
+    myLostFragment myLostFragment = new myLostFragment();
     List<LostFound> lostFounds;
     NestedScrollView scrollView;
     public static Activity activity;
     FloatingActionButton add;
+    ViewPager viewPager;
+    SmartTabLayout viewPagerTab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +72,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         add.setOnClickListener(this::onClick);
 
         scrollView.setFillViewport (true);
+        setupViewPager(viewPager);
 
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Discover", myDiscoverFragment.class)
-                .add("Lost", myLostFragment.class)
-                .create());
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
         viewPagerTab.setViewPager(viewPager);
         getUser();
     }
@@ -96,13 +90,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         //container = findViewById(R.id.container);
         scrollView = (NestedScrollView) findViewById (R.id.nest_scrollview);
         add = findViewById(R.id.add);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
     }
 
     public void getUser()
     {
         user = new User();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(uid);
+        mDatabase = mDatabase.child("user").child(uid);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -112,6 +108,42 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 String tphoneNum = dataSnapshot.child("phoneNum").getValue(String.class);
                 String temail = dataSnapshot.child("email").getValue(String.class);
 
+                /*List<LostFound> tlosts = new ArrayList<>();
+                List<LostFound> tfounds = new ArrayList<>();
+                LostFound lostFound = new LostFound();
+                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                    lostFound = d.getValue(LostFound.class);
+                    tlosts.add(lostFound);
+                }
+                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
+                    lostFound = d.getValue(LostFound.class);
+                    tfounds.add(lostFound);
+                }*/
+
+                user.setUsername(tusername);
+                user.setImagePath(timagepath);
+                user.setExtension(textension);
+                user.setPhoneNum(tphoneNum);
+                user.setEmail(temail);
+
+                getLostsFounds(user);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getLostsFounds(User user)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = mDatabase.child("Posting").child("individual").child(uid);
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> tlosts = new ArrayList<>();
                 List<LostFound> tfounds = new ArrayList<>();
                 LostFound lostFound = new LostFound();
@@ -124,15 +156,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     tfounds.add(lostFound);
                 }
 
-                user.setUsername(tusername);
-                user.setImagePath(timagepath);
-                user.setExtension(textension);
-                user.setPhoneNum(tphoneNum);
-                user.setEmail(temail);
                 user.setLosts(tlosts);
                 user.setFounds(tfounds);
-                //Toast.makeText(ProfileActivity.this, "" + tfounds.size() + "" + tlosts.size(), Toast.LENGTH_SHORT).show();
+                //.Toast.makeText(ProfileActivity.this, "" + tfounds.size() + "" + tlosts.size(), Toast.LENGTH_SHORT).show();
                 updateUI(user);
+
             }
 
             @Override
@@ -179,5 +207,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         {
             startActivity(new Intent(this, LostFoundActivity.class));
         }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        OtherProfileActivity.ViewPagerAdapter adapter = new OtherProfileActivity.ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(myDiscoverFragment, "DISCOVER");
+        adapter.addFrag(myLostFragment, "LOST");
+        viewPager.setAdapter(adapter);
     }
 }

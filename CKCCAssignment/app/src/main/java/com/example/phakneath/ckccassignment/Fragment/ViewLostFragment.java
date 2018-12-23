@@ -178,7 +178,7 @@ public class ViewLostFragment extends Fragment {
         LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
@@ -196,20 +196,19 @@ public class ViewLostFragment extends Fragment {
     {
         if(TextUtils.isEmpty(lost.getText()) || TextUtils.isEmpty(location.getText()) || TextUtils.isEmpty(contact.getText()))
         {
+            Toast.makeText(getContext(), "Please enter the above information", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
             if(count == 1 && TextUtils.isEmpty(reward.getText()))
             {
                 Toast.makeText(getContext(), "Please enter the reward desciption", Toast.LENGTH_SHORT).show();
             }
-            else
-            {
-                Toast.makeText(getContext(), "Please enter the above information", Toast.LENGTH_SHORT).show();
+            else {
+                updateUser();
+                LostFoundActivity.activity.finish();
+                Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
             }
-        }
-        else
-        {
-            updateUser();
-            LostFoundActivity.activity.finish();
-            Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
         }
     }
 

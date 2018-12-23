@@ -22,10 +22,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -46,6 +52,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     StorageReference ref;
     StorageReference storageReference;
     FirebaseAuth mAuth;
+    int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +77,49 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     {
         Intent intent = getIntent();
         lostFound = (LostFound) intent.getSerializableExtra("data");
-        updateUI();
+        if(lostFound.getItem() == null)
+        {
+            getLostFoundFromDatabase(lostFound);
+        }
+        else updateUI(lostFound);
     }
 
-    private void updateUI() {
+    public void getLostFoundFromDatabase(LostFound lostFound)
+    {
+        if(lostFound.getId().startsWith("F")) {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("Posting").child("individual").child(uID).child("founds").child(lostFound.getId()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    LostFound found = dataSnapshot.getValue(LostFound.class);
+                    updateUI(found);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else if(lostFound.getId().startsWith("L"))
+        {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("Posting").child("individual").child(uID).child("losts").child(lostFound.getId()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    LostFound found = dataSnapshot.getValue(LostFound.class);
+                    updateUI(found);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    private void updateUI(LostFound lostFound) {
         item.setText(lostFound.getItem());
         location.setText(lostFound.getLocation());
         contact.setText(lostFound.getContactNum());
@@ -134,7 +180,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(lostFound.getId().startsWith("F"))
         {
-            mDatabase.child("user").child("id").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mDatabase.child("Posting").child("individual").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
@@ -151,7 +197,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         }
         else if(lostFound.getId().startsWith("L"))
         {
-            mDatabase.child("user").child("id").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
@@ -175,7 +221,15 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         }
         else
         {
-            updateUser();
+            if(count == 1 && TextUtils.isEmpty(reward.getText()))
+            {
+                Toast.makeText(this, "Please enter the reward desciption", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                updateUser();
+                Toast.makeText(this, "Update Successful", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -187,13 +241,16 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
             staryellow.setVisibility(View.VISIBLE);
             des.setVisibility(View.VISIBLE);
             reward.setVisibility(View.VISIBLE);
+            count = 1;
         }
         else if(v == staryellow)
         {
             star.setVisibility(View.VISIBLE);
             staryellow.setVisibility(View.GONE);
-            des.setVisibility(View.VISIBLE);
-            reward.setVisibility(View.VISIBLE);
+            des.setVisibility(View.GONE);
+            reward.setVisibility(View.GONE);
+            reward.setText(null);
+            count = 0;
         }
         else if(v == save)
         {

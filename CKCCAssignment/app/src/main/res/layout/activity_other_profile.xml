@@ -1,9 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OtherProfileActivity">
+    tools:context=".OtherProfileActivity"
+    android:orientation="vertical"
+    android:background="@color/white">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:background="@android:color/white"
+        android:visibility="visible"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            android:id="@+id/title1"
+            android:layout_marginTop="28dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/back"
+                    android:id="@+id/back"
+                    />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Profile"
+                android:textSize="25dp"
+                android:textColor="@color/mainTitle"
+                android:id="@+id/title"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textStyle="bold" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:fitsSystemWindows="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@color/white">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="6dp">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:src="@drawable/profile"
+                                android:id="@+id/profilePic" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_toRightOf="@+id/profilePic"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="30dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="My Username"
+                                    android:textSize="25dp"
+                                    android:textStyle="bold"
+                                    android:id="@+id/username"
+                                    />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Posts : 0"
+                                    android:textSize="18dp"
+                                    android:layout_marginTop="2dp"
+                                    android:id="@+id/posts"
+                                    />
+                            </LinearLayout>
+
+                        </RelativeLayout>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/line_shape"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_horizontal"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Your Posts : "
+                                android:textSize="16dp"
+                                android:textColor="@color/mainTitle"
+                                />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_marginLeft="75dp">
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <de.hdodenhof.circleimageview.CircleImageView
+                                        android:layout_width="65dp"
+                                        android:layout_height="65dp"
+                                        android:src="#d6d6d6"
+                                        android:id="@+id/foundContainer"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/mainTitle"
+                                        android:textSize="20dp"
+                                        android:layout_centerInParent="true"
+                                        android:id="@+id/founds" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Founds"
+                                    android:textSize="16dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_gravity="center_horizontal"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_marginLeft="27dp">
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <de.hdodenhof.circleimageview.CircleImageView
+                                        android:layout_width="65dp"
+                                        android:layout_height="65dp"
+                                        android:src="#d6d6d6"
+                                        android:id="@+id/lostContainer"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/mainTitle"
+                                        android:textSize="20dp"
+                                        android:layout_centerInParent="true"
+                                        android:id="@+id/losts"/>
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Losts"
+                                    android:textSize="16dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_gravity="center_horizontal"/>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@color/white"
+            android:id="@+id/nest_scrollview">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.ogaclejapan.smarttablayout.SmartTabLayout
+                        android:id="@+id/viewpagertab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:clipToPadding="false"
+                        android:layout_gravity="center_horizontal"
+                        app:stl_defaultTabTextColor="@color/mainTitle"
+                        app:stl_defaultTabTextHorizontalPadding="50dp"
+                        app:stl_defaultTabTextSize="13dp"
+                        app:stl_defaultTabTextMinWidth="180dp"
+                        app:stl_dividerColor="@color/transparent"
+                        app:stl_indicatorColor="#EFEFEF"
+                        app:stl_indicatorCornerRadius="18dp"
+                        app:stl_indicatorGravity="center"
+                        app:stl_indicatorInterpolation="smart"
+                        app:stl_indicatorThickness="33dp"
+                        app:stl_indicatorWidth="180dp"
+                        app:stl_underlineColor="@color/transparent"
+                        app:stl_underlineThickness="0dp"
+                        />
+
+                    <android.support.v4.view.ViewPager
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/viewpager">
+
+                    </android.support.v4.view.ViewPager>
+                </LinearLayout>
+
+            </FrameLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

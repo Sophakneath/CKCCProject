@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.phakneath.ckccassignment.Adapter.myFoundAdapter;
 import com.example.phakneath.ckccassignment.Adapter.mySaveAdapter;
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,12 +33,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SaveActivity extends AppCompatActivity implements View.OnClickListener, mySaveAdapter.openDetail {
 
     CircleImageView back;
-    private List<LostFound> saves;
+    private List<SaveLostFound> saves;
     RecyclerView listSaves;
     mySaveAdapter mySaveAdapter;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
+    LostFound getlostFound;
+    ProgressBar progressBar;
+    TextView noPost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +54,12 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
+        progressBar.setVisibility(View.VISIBLE);
+        //getSaves();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
         getSaves();
     }
 
@@ -54,10 +67,15 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     {
         back = findViewById(R.id.back);
         listSaves = findViewById(R.id.container);
+        progressBar = findViewById(R.id.progress);
+        noPost = findViewById(R.id.notpost);
     }
 
-    public void setAdapter(List<LostFound> saves)
+    public void setAdapter(List<SaveLostFound> saves)
     {
+        progressBar.setVisibility(View.GONE);
+        if(saves.size() <= 0) noPost.setVisibility(View.VISIBLE);
+        else noPost.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         listSaves.setLayoutManager(layoutManager);
         mySaveAdapter = new mySaveAdapter(this, saves, uid);
@@ -67,22 +85,23 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     public void getSaves()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("user").child("id").child(uid);
+        mDatabase = mDatabase.child("Posting").child("individual").child(uid).child("save");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                List<LostFound> savess = new ArrayList<>();
-                LostFound lostFound = new LostFound();
+                List<SaveLostFound> savess = new ArrayList<>();
+                SaveLostFound lostFound = new SaveLostFound();
 
-                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
+                for(DataSnapshot d: dataSnapshot.getChildren())
                 {
-                    lostFound = d.getValue(LostFound.class);
+                    lostFound = d.getValue(SaveLostFound.class);
                     savess.add(lostFound);
                 }
-
-                setAdapter(savess);
-                mySaveAdapter.openDetail = SaveActivity.this::onOpenDetail;
+                //if(savess.size() > 0) {
+                    setAdapter(savess);
+                    mySaveAdapter.openDetail = SaveActivity.this::onOpenDetail;
+                //}
             }
 
             @Override
@@ -101,11 +120,12 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onOpenDetail(LostFound lostFound) {
+    public void onOpenDetail(SaveLostFound lostFound) {
         Intent intent = new Intent(this, DetailActivity.class);
         Bundle bundle = new Bundle();
         Bundle bundle1 = new Bundle();
-        bundle.putSerializable("getLostFound", lostFound);
+        //getSaveFromOtherUser(lostFound);
+        bundle.putSerializable("getSaveLostFound", lostFound);
         bundle1.putSerializable("user", null);
         intent.putExtras(bundle);
         intent.putExtras(bundle1);

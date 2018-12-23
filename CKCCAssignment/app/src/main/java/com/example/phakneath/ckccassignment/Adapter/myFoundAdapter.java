@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,13 +36,13 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
     private User user;
     public myLostAdapter.editPost editPost;
     public foundListAdapter.deletePosts deletePosts;
-    private List<LostFound> saves;
+    private List<SaveLostFound> saves;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
 
-    public myFoundAdapter(Context context, List<LostFound> lostFounds, User user, List<LostFound> saves)
+    public myFoundAdapter(Context context, List<LostFound> lostFounds, User user, List<SaveLostFound> saves)
     {
         this.context = context;
         this.lostFounds = lostFounds;
@@ -61,18 +62,19 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         LostFound lostFound = lostFounds.get(position);
+
         holder.found.setText("Found : " + lostFound.getItem());
         holder.location.setText("Location : " + lostFound.getLocation());
         holder.contact.setText("Contact : " + lostFound.getContactNum());
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
 
         if(saves.size() >0)
-        for (LostFound l: saves) {
+        for (SaveLostFound l: saves) {
             if(l.getId().equals(lostFound.getId()))
             {
                 holder.onSave.setVisibility(View.VISIBLE);
                 holder.notsave.setVisibility(View.GONE);
-                count = 1;
+                //count = 1;
             }
 
         }
@@ -112,19 +114,40 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
             }
         });
 
-        holder.save.setOnClickListener(new View.OnClickListener() {
+        /*holder.save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(count == 0)
                 {
                     count = 1;
-                    onSave(lostFounds.get(position), holder.onSave,holder.notsave);
+                    onSave(saveLostFound, holder.onSave,holder.notsave);
                 }
                 else if(count == 1)
                 {
                     count = 0;
-                    onUnSave(lostFounds.get(position), holder.onSave, holder.notsave);
+                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
                 }
+            }
+        });*/
+
+        holder.onSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaveLostFound saveLostFound = new SaveLostFound();
+                saveLostFound.setId(lostFound.getId());
+                saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                onUnSave(saveLostFound, holder.onSave, holder.notsave);
+            }
+        });
+
+        holder.notsave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaveLostFound saveLostFound = new SaveLostFound();
+                saveLostFound.setId(lostFound.getId());
+                saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });
     }
@@ -166,10 +189,10 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
         public void onOpenDetailFound(LostFound lostFound, User user);
     }
 
-    public void onSave(LostFound lostFound, ImageView a, ImageView b)
+    public void onSave(SaveLostFound lostFound, ImageView a, ImageView b)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("save").child(lostFound.getId()).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 a.setVisibility(View.VISIBLE);
@@ -184,10 +207,10 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
         });
     }
 
-    public void onUnSave(LostFound lostFound, ImageView a, ImageView b)
+    public void onUnSave(SaveLostFound lostFound, ImageView a, ImageView b)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child("id").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("Posting").child("individual").child(uid).child("save").child(lostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 a.setVisibility(View.GONE);

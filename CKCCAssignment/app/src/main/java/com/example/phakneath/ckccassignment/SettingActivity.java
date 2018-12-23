@@ -175,8 +175,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("user").child("id").child(uID).child("imagePath").setValue(imagePath);
-                            mDatabase.child("user").child("id").child(uID).child("extension").setValue(extension);
+                            mDatabase.child("user").child(uID).child("imagePath").setValue(imagePath);
+                            mDatabase.child("user").child(uID).child("extension").setValue(extension);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -235,10 +235,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if(!username.getText().toString().equals(user.getUsername()) || !phoneNum.getText().toString().equals(user.getPhoneNum()))
         {
             mDatabase = FirebaseDatabase.getInstance().getReference();
-            mDatabase.child("user").child("id").child(uID).child("username").setValue(username.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mDatabase.child("user").child(uID).child("username").setValue(username.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    mDatabase.child("user").child("id").child(uID).child("phoneNum").setValue(phoneNum.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mDatabase.child("user").child(uID).child("phoneNum").setValue(phoneNum.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(uri != null || !username.getText().toString().equals(user.getUsername()) || !phoneNum.getText().toString().equals(user.getPhoneNum())) Toast.makeText(SettingActivity.this, " Changed Successfully", Toast.LENGTH_SHORT).show();
