@@ -18,12 +18,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.theartofdev.edmodo.cropper.CropImageView
+            <ImageView
+
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
                 android:background="#EFEFEF"
                 android:id="@+id/image"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 />
 
             <ImageView
@@ -43,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Found"
+                android:text="Title"
                 android:textSize="16dp"
                 android:textColor="@color/mainTitle"
                 android:layout_marginLeft="30dp"
@@ -58,7 +59,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="5dp"
-                android:hint="e.g. Wallet"
+                android:hint="e.g. Wallet, Iphone"
                 android:paddingLeft="10dp"
                 android:textColor="@color/mainTitle1"
                 android:id="@+id/found"
@@ -134,7 +135,68 @@
                 android:id="@+id/Remark"
                 android:layout_marginBottom="20dp"
                 />
+            <LinearLayout
+                android:id="@+id/frewardContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="10dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/star1"
+                        android:id="@+id/fstar"/>
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/staryellow"
+                        android:id="@+id/fstaryellow"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reward for those who found your item? "
+                    android:textSize="16dp"
+                    android:layout_marginTop="30dp"
+                    android:textColor="@color/mainTitle1"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reward Description"
+                android:textSize="16dp"
+                android:textColor="@color/mainTitle"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:id="@+id/fdes"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@drawable/retangle_edittext"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="5dp"
+                android:hint="e.g. get 100$ if you found this wallet"
+                android:paddingLeft="10dp"
+                android:textColor="@color/mainTitle1"
+                android:id="@+id/frewardDes"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"
+                />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

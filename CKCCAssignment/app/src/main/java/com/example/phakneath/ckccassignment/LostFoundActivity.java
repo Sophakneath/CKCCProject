@@ -48,14 +48,15 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.example.phakneath.ckccassignment.OtherProfileActivity.ViewPagerAdapter;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LostFoundActivity extends AppCompatActivity implements View.OnClickListener, myLostAdapter.editPost{
 
     LinearLayout container;
-    ViewDiscoverFragment viewDiscoverFragment = new ViewDiscoverFragment();
-    ViewLostFragment viewLostFragment = new ViewLostFragment();
+    ViewDiscoverFragment viewDiscoverFragment;
+    ViewDiscoverFragment viewLostFragment;
     CircleImageView back;
     TextView post;
     public static Activity activity;
@@ -68,6 +69,8 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_lost_found);
+        viewLostFragment = ViewDiscoverFragment.newInstance("","",false);
+        viewDiscoverFragment = ViewDiscoverFragment.newInstance("","",true);
 
         initView();
         activity = this;
@@ -79,6 +82,7 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
 
     public void initView()
     {
+
         container = findViewById(R.id.container);
         back = findViewById(R.id.back);
         post = findViewById(R.id.posting);
@@ -105,6 +109,7 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         transaction.replace(R.id.container, viewDiscoverFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+
     }
 
     public void openFound()
@@ -114,6 +119,7 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         transaction.replace(R.id.container, viewLostFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        viewLostFragment.setType(false);
     }
 
     @Override
@@ -130,5 +136,22 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         adapter.addFrag(viewDiscoverFragment, "DISCOVER");
         adapter.addFrag(viewLostFragment, "LOST");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                viewDiscoverFragment.setImage(result);
+                viewLostFragment.setImage(result);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+
+            }
+        }
+
+
     }
 }

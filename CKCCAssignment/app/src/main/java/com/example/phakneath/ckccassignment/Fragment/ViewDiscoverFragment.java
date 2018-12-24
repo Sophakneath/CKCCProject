@@ -29,6 +29,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,9 +69,10 @@ import static android.app.Activity.RESULT_OK;
 public class ViewDiscoverFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public EditText found, location, contact, remark;
-    CropImageView image;
-    ImageView defaultpic;
+    private static final String ARG_PARAM3 = "param3";
+    public EditText found, location, contact, remark, reward;
+    ImageView image;
+    ImageView defaultpic, star, staryellow;;
     private String pathImage, extension;
     private Uri mCropImageUri;
     Uri uri;
@@ -82,8 +84,11 @@ public class ViewDiscoverFragment extends Fragment {
     String uID;
     FirebaseAuth mAuth;
     ScrollView scrollView;
-    TextView foundtxt;
+    TextView foundtxt, des;
+    LinearLayout rewardContainer;
     Button post;
+    int count;
+    Boolean isFoundFragment = true;
 
     private String mParam1;
     private String mParam2;
@@ -91,14 +96,17 @@ public class ViewDiscoverFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ViewDiscoverFragment() {
+
     }
 
+
     // TODO: Rename and change types and number of parameters
-    public static ViewDiscoverFragment newInstance(String param1, String param2) {
+    public static ViewDiscoverFragment newInstance(String param1, String param2,Boolean isFoundFragment) {
         ViewDiscoverFragment fragment = new ViewDiscoverFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_PARAM3,isFoundFragment);
         fragment.setArguments(args);
         return fragment;
     }
@@ -109,6 +117,7 @@ public class ViewDiscoverFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            isFoundFragment = getArguments().getBoolean(ARG_PARAM3);
         }
     }
 
@@ -126,6 +135,12 @@ public class ViewDiscoverFragment extends Fragment {
         foundtxt = view.findViewById(R.id.foundtxt);
         post = view.findViewById(R.id.post);
 
+        reward = view.findViewById(R.id.frewardDes);
+        star = view.findViewById(R.id.fstar);
+        staryellow = view.findViewById(R.id.fstaryellow);
+        des = view.findViewById(R.id.fdes);
+        rewardContainer = view.findViewById(R.id.frewardContainer);
+        setType(isFoundFragment);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,6 +166,27 @@ public class ViewDiscoverFragment extends Fragment {
                 verifyUpdate();
             }
         });
+        star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                staryellow.setVisibility(View.VISIBLE);
+                star.setVisibility(View.GONE);
+                des.setVisibility(View.VISIBLE);
+                reward.setVisibility(View.VISIBLE);
+                count = 1;
+            }
+        });
+
+        staryellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                staryellow.setVisibility(View.GONE);
+                star.setVisibility(View.VISIBLE);
+                des.setVisibility(View.GONE);
+                reward.setVisibility(View.GONE);
+                count = 0;
+            }
+        });
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -158,6 +194,27 @@ public class ViewDiscoverFragment extends Fragment {
 
         return view;
     }
+
+    public void setType(Boolean isFoundFragment){
+        if (isFoundFragment){
+            rewardContainer.setVisibility(View.GONE);
+            this.isFoundFragment = true;
+            staryellow.setVisibility(View.GONE);
+            star.setVisibility(View.GONE);
+            des.setVisibility(View.GONE);
+            reward.setVisibility(View.GONE);
+
+        }else {
+            rewardContainer.setVisibility(View.VISIBLE);
+            this.isFoundFragment = true;
+            staryellow.setVisibility(View.GONE);
+            star.setVisibility(View.VISIBLE);
+            des.setVisibility(View.GONE);
+            reward.setVisibility(View.GONE);
+            this.isFoundFragment = false;
+        }
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -187,7 +244,17 @@ public class ViewDiscoverFragment extends Fragment {
         CropImage.activity()
                 .start(getActivity());
     }
-
+    public void  setImage(CropImage.ActivityResult result){
+        try {
+            File tempFile    = new File(result.getUri().getPath());
+            Log.d("test",result.getUri().getPath().toString());
+            if(tempFile.exists()){
+              image.setImageURI(result.getUri());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     public void onSelectImageClick(View view) {
         if (CropImage.isExplicitCameraPermissionRequired(getContext())) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE);
@@ -199,29 +266,6 @@ public class ViewDiscoverFragment extends Fragment {
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // handle result of pick image chooser
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri imageUri = CropImage.getPickImageResultUri(getContext(), data);
-
-            Toast.makeText(getContext(), imageUri+"hello", Toast.LENGTH_LONG).show();
-            Log.d("Myactivity", "onActivityResult: hellohello");
-            image.setImageUriAsync(mCropImageUri);
-            // For API >= 23 we need to check specifically that we have permissions to read external storage.
-            if (CropImage.isReadExternalStoragePermissionsRequired(getContext(), imageUri)) {
-                // request permissions and handle the result in onRequestPermissionsResult()
-                mCropImageUri = imageUri;
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},   CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE);
-
-
-            } else {
-                // no permissions required or already granted, can start crop image activity
-                startCropImageActivity(imageUri);
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -417,6 +461,34 @@ public class ViewDiscoverFragment extends Fragment {
         }
     }
 
+
+    public void postLost()
+    {
+        String item = found.getText().toString();
+        String loc = location.getText().toString();
+        String con = contact.getText().toString();
+        String rem = null;
+        String id = "L" + uID + System.currentTimeMillis();
+        String rewardDes = null;
+
+        if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
+        if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
+                Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     public void updateUser()
     {
         String item = found.getText().toString();
@@ -450,7 +522,12 @@ public class ViewDiscoverFragment extends Fragment {
         }
         else
         {
-            updateUser();
+            if (isFoundFragment){
+                updateUser();
+            }else{
+                postLost();
+            }
+
             LostFoundActivity.activity.finish();
             Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
         }
