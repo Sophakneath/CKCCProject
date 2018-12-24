@@ -67,7 +67,7 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
         uid = mAuth.getCurrentUser().getUid();
 
         LostFound lostFound = lostFounds.get(position);
-        holder.found.setText("Found : " + lostFound.getItem());
+        holder.found.setText("Lost : " + lostFound.getItem());
         holder.location.setText("Location : " + lostFound.getLocation());
         holder.contact.setText("Contact : " + lostFound.getContactNum());
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);

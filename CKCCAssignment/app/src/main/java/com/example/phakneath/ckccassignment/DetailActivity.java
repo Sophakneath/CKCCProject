@@ -9,12 +9,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Dialog.FounderDialog;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Fragment.myDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
@@ -52,6 +54,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     ImageView onSave, notsave;
     List<LostFound> saves;
     SaveLostFound saveLostFound;
+    Button founder;
+    FounderDialog dialog = new FounderDialog();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +69,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         back.setOnClickListener(this::onClick);
         save.setOnClickListener(this::onClick);
         gotoProfile.setOnClickListener(this::onClick);
+        founder.setOnClickListener(this::onClick);
         getUser();
     }
 
@@ -184,7 +189,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 postingActivity.getImage(profile, user.getImagePath()+"."+user.getExtension(), this);
             }
         }
-        found.setText("Found : " + lostFound.getItem());
+
+        if(lostFound.getId().startsWith("F")) {
+            found.setText("Found : " + lostFound.getItem());
+            founder.setText("I Lost it");
+        }
+        else if(lostFound.getId().startsWith("L"))
+        {
+            found.setText("Lost : " + lostFound.getItem());
+            founder.setText("I Found it");
+        }
+
         location.setText("Location : " +lostFound.getLocation());
         contact.setText("Contact : " +lostFound.getContactNum());
         remark.setText("Remark : " +lostFound.getRemark());
@@ -350,6 +365,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         onSave = findViewById(R.id.onsave);
         notsave = findViewById(R.id.notsave);
         gotoProfile = findViewById(R.id.gotoProfile);
+        founder = findViewById(R.id.founder);
     }
 
     public void getSaves(LostFound lf)
@@ -555,6 +571,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             {
                 getOtherProfile();
             }
+        }
+        else if(v == founder)
+        {
+            if(saveLostFound == null)
+            {
+                SaveLostFound saveLostFound = new SaveLostFound();
+                saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                saveLostFound.setId(lostFound.getId());
+                dialog.setData(saveLostFound);
+            }
+            else dialog.setData(saveLostFound);
+
+            dialog.show(getFragmentManager(), "myFounderDialog");
         }
     }
 }

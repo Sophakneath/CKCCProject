@@ -186,6 +186,18 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:id="@+id/rewardDes"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="I found it"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_login"
+                android:textColor="@color/white"
+                android:id="@+id/founder"/>
         </LinearLayout>
 
     </ScrollView>

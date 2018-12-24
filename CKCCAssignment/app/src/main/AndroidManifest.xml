@@ -48,7 +48,8 @@
             android:name=".EditPostActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".SearchActivity" />
-        <activity android:name=".OtherProfileActivity"></activity>
+        <activity android:name=".OtherProfileActivity" />
+        <activity android:name=".NotificationActivity"></activity>
     </application>
 
 </manifest>

@@ -70,7 +70,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     FloatingActionButton add;
     ViewPager viewPager;
     SmartTabLayout viewPagerTab;
-    FragmentPagerItemAdapter adapter;
+    FrameLayout containerNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +89,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         header.setOnClickListener(this::onClick);
         search.setOnClickListener(this::onClick);
         add.setOnClickListener(this::onClick);
+        containerNotification.setOnClickListener(this::onClick);
 
         getUser();
         setFragment();
@@ -115,6 +116,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         add = findViewById(R.id.add);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        containerNotification = findViewById(R.id.notificationContainer);
     }
 
 
@@ -134,6 +136,10 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         else if(v == add)
         {
             startActivity(new Intent(this, LostFoundActivity.class));
+        }
+        else if(v == containerNotification)
+        {
+            startActivity(new Intent(this, NotificationActivity.class));
         }
     }
 
