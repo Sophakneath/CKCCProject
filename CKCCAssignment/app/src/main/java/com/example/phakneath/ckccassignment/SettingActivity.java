@@ -41,6 +41,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -63,12 +66,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     FirebaseAuth mAuth;
     LoadingDialog dialog = new LoadingDialog();
     public static Activity activity;
+    Uri mCropImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_setting);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -105,9 +107,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         username.setText(user.getUsername());
         phoneNum.setText(user.getPhoneNum());
         myEmail.setText(user.getEmail());
-        if(user.getImagePath() != null && user.getExtension() != null)
+        if(user.getImagePath() != null)
         {
-            postingActivity.getImage(profile, user.getImagePath() + "." + user.getExtension(), this);
+            postingActivity.getImage(profile, user.getImagePath(), this);
         }
         username.setSelection(username.getText().length());
         phoneNum.setSelection(phoneNum.getText().length());
@@ -121,49 +123,84 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
-    private void openGallery() {
-        Intent i = new Intent(Intent.ACTION_PICK, Uri.parse(MediaStore.Images.Media.DATA));
-        i.setType("image/*");
-        startActivityForResult(i,OPEN_GALLERY);
+    private void startCropImageActivity() {
+        CropImage.activity()
+                .start(this);
     }
+    public void setImage(CropImage.ActivityResult result){
+        try {
+            File tempFile    = new File(result.getUri().getPath());
+            Log.d("test",result.getUri().getPath().toString());
+            if(tempFile.exists()){
+                profile.setImageURI(result.getUri());
+                uri = result.getUri();
+                pathImage = uri.getLastPathSegment(); //+ System.currentTimeMillis();
+                //extension = getFileExtension(uri);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void onSelectImageClick(View view) {
+        if (CropImage.isExplicitCameraPermissionRequired(this)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            //CropImage.startPickImageActivity(this);
+            startCropImageActivity();
+        }
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == OPEN_GALLERY)
-        {
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                openGallery();
+        if (requestCode == CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE) {
+            if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // required permissions granted, start crop image activity
+                startCropImageActivity(mCropImageUri);
+
+            } else {
+                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
             }
         }
+        if (requestCode == CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                CropImage.startPickImageActivity(this);
+            } else {
+                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .start(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == OPEN_GALLERY)
-        {
-            if (resultCode == RESULT_OK)
-            {
-                uri = data.getData();
-                Glide.with(this).load(uri).into(profile);
-                pathImage = uri.getLastPathSegment() + System.currentTimeMillis();
-                extension = getFileExtension(uri);
-                Log.e("ooooo", "Path Image : " + pathImage);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                setImage(result);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
         }
     }
 
 
     //upload image to Firebase Storage
-    public void uploadImage(Uri uri, User user, String imagePath, String extension) {
+    public void uploadImage(Uri uri, User user, String imagePath) {
 
         storageReference = FirebaseStorage.getInstance().getReference();
         String p = user.getImagePath() + "." + user.getExtension();
         if(uri != null)
         {
-            ref = storageReference.child("profile/").child( imagePath + "." + extension);
+            ref = storageReference.child("profile/").child( imagePath);
             mUploadTask = ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -176,7 +213,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
                             mDatabase.child("user").child(uID).child("imagePath").setValue(imagePath);
-                            mDatabase.child("user").child(uID).child("extension").setValue(extension);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -194,25 +230,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public void gallery()
-    {
-        if(ContextCompat.checkSelfPermission(SettingActivity.this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != getPackageManager().PERMISSION_GRANTED)
-        {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},OPEN_GALLERY);
-        }
-        else
-        {
-            openGallery();
-        }
-    }
-
-    public void updateInformationUser(String uID, String imagePath, String extension, User user)
+    public void updateInformationUser(String uID, String imagePath, User user)
     {
         if(mUploadTask == null || !mUploadTask.isInProgress()) {
-            uploadImage(uri, user, imagePath, extension);
+            uploadImage(uri, user, imagePath);
         }
         if(mUploadTask != null)
         mUploadTask.addOnCompleteListener(new OnCompleteListener() {
@@ -267,7 +288,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
            imm.hideSoftInputFromWindow(save.getWindowToken(), 0);
            dialog.show(getFragmentManager(), "dialogLoading");
-           updateInformationUser(uID, pathImage, extension, user);
+           updateInformationUser(uID, pathImage, user);
        }
        else if(v == email)
        {
@@ -275,7 +296,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
        }
        else if(v == profile)
        {
-           gallery();
+           onSelectImageClick(profile);
        }
     }
 }

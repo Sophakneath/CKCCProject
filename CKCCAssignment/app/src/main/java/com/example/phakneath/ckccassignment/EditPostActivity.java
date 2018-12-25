@@ -1,11 +1,16 @@
 package com.example.phakneath.ckccassignment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -17,9 +22,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -27,9 +35,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +58,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     TextView des;
     LostFound lostFound;
     ProgressBar progress;
-    String uID;
+    String uID, pathImage;
     DatabaseReference mDatabase;
     public static final int OPEN_GALLERY = 1;
     static StorageTask mUploadTask;
@@ -53,7 +66,8 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     StorageReference storageReference;
     FirebaseAuth mAuth;
     int count=0;
-
+    Uri uri, mCropImageUri;
+    foundListAdapter foundListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +75,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         initView();
+        foundListAdapter = new foundListAdapter();
         getLostFound();
         star.setOnClickListener(this::onClick);
         staryellow.setOnClickListener(this::onClick);
@@ -141,6 +156,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
             reward.setText(lostFound.getReward());
         }
         item.setSelection(item.getText().length());
+        if(lostFound.getImage() != null){ foundListAdapter.getImage(picture,lostFound.getImage(),this); defaultpic.setVisibility(View.GONE);}
     }
 
     private void initView() {
@@ -227,9 +243,130 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
             }
             else
             {
-                updateUser();
-                Toast.makeText(this, "Update Successful", Toast.LENGTH_SHORT).show();
+                if(mUploadTask == null || !mUploadTask.isInProgress()) {
+                    uploadImage(uri, lostFound, pathImage);
+                }
+                if(mUploadTask != null)
+                    mUploadTask.addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            updateUser();
+                            Toast.makeText(EditPostActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
             }
+        }
+    }
+
+
+    private void startCropImageActivity() {
+        CropImage.activity()
+                .start(this);
+    }
+    public void setImage(CropImage.ActivityResult result){
+        try {
+            File tempFile    = new File(result.getUri().getPath());
+            Log.d("test",result.getUri().getPath().toString());
+            if(tempFile.exists()){
+                picture.setImageURI(result.getUri());
+                uri = result.getUri();
+                pathImage = uri.getLastPathSegment(); //+ System.currentTimeMillis();
+                //extension = getFileExtension(uri);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void onSelectImageClick(View view) {
+        if (CropImage.isExplicitCameraPermissionRequired(this)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            //CropImage.startPickImageActivity(this);
+            startCropImageActivity();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE) {
+            if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // required permissions granted, start crop image activity
+                startCropImageActivity(mCropImageUri);
+
+            } else {
+                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
+            }
+        }
+        if (requestCode == CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                CropImage.startPickImageActivity(this);
+            } else {
+                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .start(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                defaultpic.setVisibility(View.GONE);
+                setImage(result);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
+    //upload image to Firebase Storage
+    public void uploadImage(Uri uri, LostFound lostFound, String imagePath) {
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+        String p = lostFound.getImage();
+        if(uri != null)
+        {
+            ref = storageReference.child("posting/").child( imagePath);
+            mUploadTask = ref.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            ref = storageReference.child("posting/").child(p);
+                            ref.delete();
+                            Log.d("uplaod", "onSuccess: " + taskSnapshot.toString());
+
+
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                            mDatabase.child("user").child(uID).child("imagePath").setValue(imagePath);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
         }
     }
 
@@ -264,11 +401,11 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         }
         else if(v == picture)
         {
-
+            onSelectImageClick(picture);
         }
         else if(v == defaultpic)
         {
-
+            onSelectImageClick(picture);
         }
     }
 }

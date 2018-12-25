@@ -29,7 +29,8 @@
                     android:layout_margin="8dp"
                     android:src="@color/whiteBlurr"
                     android:background="@drawable/holderforpic"
-                    android:id="@+id/picture"/>
+                    android:id="@+id/picture"
+                    android:scaleType="centerCrop"/>
 
                 <ImageView
                     android:layout_width="30dp"

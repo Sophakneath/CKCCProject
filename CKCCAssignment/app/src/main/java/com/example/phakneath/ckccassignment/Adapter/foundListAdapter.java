@@ -1,6 +1,7 @@
 package com.example.phakneath.ckccassignment.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.SaveLostFound;
@@ -22,6 +24,7 @@ import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 
 import java.io.Serializable;
@@ -51,6 +56,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
+    FirebaseStorage storage;
 
     public foundListAdapter(Context context, List<LostFound> lostFounds, String uID)
     {
@@ -58,6 +64,8 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         this.lostFounds = lostFounds;
         this.uID = uID;
     }
+
+    public foundListAdapter(){}
 
     @NonNull
     @Override
@@ -78,7 +86,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
         if(lostFound.getMyOwner().equals(uID)) holder.more.setVisibility(View.VISIBLE);
 
-        //Toast.makeText(context, saves.size(), Toast.LENGTH_SHORT).show();
+        if(lostFound.getImage() != null){ getImage(holder.imagefound, lostFound.getImage(), context); holder.defaultpic.setVisibility(View.GONE); }
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());
         saveLostFound.setMyOwnerID(lostFound.getMyOwner());
@@ -119,22 +127,6 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
                 //Toast.makeText(context, ""+lostFounds.get(position), Toast.LENGTH_SHORT).show();
             }
         });
-
-        /*holder.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(count == 0)
-                {
-                    count = 1;
-                    onSave(saveLostFound, holder.onSave,holder.notsave);
-                }
-                else if(count == 1)
-                {
-                    count = 0;
-                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
-                }
-            }
-        });*/
 
         holder.onSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,7 +251,6 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
                         }
                     }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -267,4 +258,24 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         });
     }
 
+    public void getImage(ImageView img, String getImage, Context context)
+    {
+        storage = FirebaseStorage.getInstance();
+        StorageReference ref = storage.getReference().child("posting/" + getImage);
+        try {
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    try {
+                        Glide.with(context).load(uri).into(img);
+                    }catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

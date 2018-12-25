@@ -47,8 +47,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     PostingActivity postingActivity = new PostingActivity();
     User user;
     RecyclerView container;
-    myDiscoverFragment myDiscoverFragment = new myDiscoverFragment();
-    myLostFragment myLostFragment = new myLostFragment();
+    myDiscoverFragment myDiscoverFragment;
+    myLostFragment myLostFragment;
     List<LostFound> lostFounds;
     NestedScrollView scrollView;
     public static Activity activity;
@@ -62,6 +62,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_profile);
+        myDiscoverFragment = new myDiscoverFragment();
+        myLostFragment = new myLostFragment();
 
         initView();
         activity = this;
@@ -178,9 +180,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         int size = user.getFounds().size() + user.getLosts().size();
         posting.setText("Posts : " + size+ "");
 
-        if(user.getImagePath() != null && user.getExtension() != null)
+        if(user.getImagePath() != null)
         {
-            postingActivity.getImage(profilePic, user.getImagePath()+"."+user.getExtension(), this);
+            postingActivity.getImage(profilePic, user.getImagePath(), this);
         }
     }
 

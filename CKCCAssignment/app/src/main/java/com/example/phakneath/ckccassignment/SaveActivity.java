@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -46,8 +47,6 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_save);
 
         initView();
@@ -75,7 +74,10 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     {
         progressBar.setVisibility(View.GONE);
         if(saves.size() <= 0) noPost.setVisibility(View.VISIBLE);
-        else noPost.setVisibility(View.GONE);
+        else {
+            noPost.setVisibility(View.GONE);
+            Collections.reverse(saves);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         listSaves.setLayoutManager(layoutManager);
         mySaveAdapter = new mySaveAdapter(this, saves, uid);

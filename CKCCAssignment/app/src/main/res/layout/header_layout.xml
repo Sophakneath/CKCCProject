@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/primaryColor">
+        android:background="@color/mainColor">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -22,16 +22,29 @@
                 android:src="@drawable/userprofile"
                 android:id="@+id/profile"/>
 
-            <TextView
+            <android.support.v7.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Username"
                 android:layout_below="@+id/profile"
-                android:layout_centerHorizontal="true"
-                android:textSize="17dp"
                 android:layout_marginTop="8dp"
-                android:id="@+id/username"
-                />
+                android:layout_centerHorizontal="true"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/whiteBlurr"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Username"
+                    android:textSize="17dp"
+                    android:id="@+id/username"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    />
+            </android.support.v7.widget.CardView>
         </RelativeLayout>
 
     </RelativeLayout>

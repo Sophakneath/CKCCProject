@@ -83,6 +83,7 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
         Notification notification = new Notification(id,tlocation,tcontact,tremark,saveLostFound.getId(),saveLostFound.getMyOwnerID(),uID);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("notification").child(id).setValue(notification);
+        mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("notification").child("receive").child(id).setValue(notification);
+        mDatabase.child("Posting").child("individual").child(uID).child("notification").child("send").child(id).setValue(notification);
     }
 }

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Dialog.FounderDialog;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Fragment.myDiscoverFragment;
@@ -42,11 +43,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     CircleImageView back;
     TextView username, found, location, contact, remark, rewardDes;
     CircleImageView profile;
-    ImageView more, star, picture;
-    LostFound lostFound = new LostFound();
+    ImageView more, star, picture, defaultpic;
+    LostFound lostFound;
     RelativeLayout save, share, gotoProfile;
     User user;
-    PostingActivity postingActivity = new PostingActivity();
+    PostingActivity postingActivity;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
@@ -55,15 +56,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     List<LostFound> saves;
     SaveLostFound saveLostFound;
     Button founder;
-    FounderDialog dialog = new FounderDialog();
+    FounderDialog dialog;
+    foundListAdapter foundListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_detail);
 
         initView();
+        postingActivity = new PostingActivity();
+        foundListAdapter = new foundListAdapter();
+        lostFound = new LostFound();
+        dialog = new FounderDialog();
+
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
@@ -184,9 +189,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         if(user != null)
         {
             username.setText(user.getUsername());
-            if(user.getImagePath() != null && user.getExtension() != null)
+            if(user.getImagePath() != null)
             {
-                postingActivity.getImage(profile, user.getImagePath()+"."+user.getExtension(), this);
+                postingActivity.getImage(profile, user.getImagePath(), this);
             }
         }
 
@@ -211,6 +216,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         else rewardDes.setText("Reward Description : None");
 
         if(lostFound.getMyOwner().equals(uid)) more.setVisibility(View.VISIBLE);
+        if(lostFound.getImage() != null) {foundListAdapter.getImage(picture,lostFound.getImage(),this); defaultpic.setVisibility(View.GONE);}
 
         more.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,6 +372,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         notsave = findViewById(R.id.notsave);
         gotoProfile = findViewById(R.id.gotoProfile);
         founder = findViewById(R.id.founder);
+        defaultpic = findViewById(R.id.defaultpic);
     }
 
     public void getSaves(LostFound lf)
@@ -479,18 +486,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 String timagepath = dataSnapshot.child("imagePath").getValue(String.class);
                 String textension = dataSnapshot.child("extension").getValue(String.class);
                 String id = dataSnapshot.child("id").getValue(String.class);
-
-                /*List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
-                LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tlosts.add(lostFound);
-                }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tfounds.add(lostFound);
-                }*/
 
                 otherUser.setUsername(tusername);
                 otherUser.setImagePath(timagepath);

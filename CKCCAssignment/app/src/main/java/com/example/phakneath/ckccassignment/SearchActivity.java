@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Adapter.searchResultAdapter;
 import com.example.phakneath.ckccassignment.Adapter.searchResultAdapter.openDetail;
 import com.example.phakneath.ckccassignment.Model.LostFound;
@@ -52,15 +53,17 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     ImageView foundTab, lostTab, usersTab;
     RelativeLayout foundCon, lostCon, usersCon;
     int count=1;
-
+    foundListAdapter foundListAdapter;
+    PostingActivity postingActivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         setContentView(R.layout.activity_search);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         initView();
+        foundListAdapter = new foundListAdapter();
+        postingActivity = new PostingActivity();
         mAuth = FirebaseAuth.getInstance();
         uID = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
@@ -179,6 +182,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     holder.item.setText("Found : " + lostFound.getItem());
                     holder.location.setText("Location : " + lostFound.getLocation());
                     holder.contact.setText("Contact : " + lostFound.getContactNum());
+                    if(lostFound.getImage() != null){ foundListAdapter.getImage(holder.picture, lostFound.getImage(), SearchActivity.this); holder.defaultpic.setVisibility(View.GONE); }
 
                     holder.container.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -224,6 +228,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     holder.item.setText("Lost : " + lostFound.getItem());
                     holder.location.setText("Location : " + lostFound.getLocation());
                     holder.contact.setText("Contact : " + lostFound.getContactNum());
+                    if(lostFound.getImage() != null){ foundListAdapter.getImage(holder.picture, lostFound.getImage(), SearchActivity.this); holder.defaultpic.setVisibility(View.GONE); }
 
                     holder.container.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -268,6 +273,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                         User user = model;
 
                         holder.item.setText(user.getUsername());
+                        if(user.getImagePath() != null){ postingActivity.getImage(holder.picture, user.getImagePath(), SearchActivity.this); }
 
                         holder.container.setOnClickListener(new View.OnClickListener() {
                             @Override

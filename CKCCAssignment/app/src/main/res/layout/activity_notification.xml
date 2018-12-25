@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="95dp"
+        android:layout_height="71dp"
         android:background="@color/mainColor"
         android:visibility="visible"
         >
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/title1"
-            android:layout_marginTop="28dp">
+            android:layout_centerVertical="true">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -51,41 +51,38 @@
 
     </RelativeLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ProgressBar
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:id="@+id/progress"
-                android:indeterminateDrawable="@drawable/progresscolor"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:visibility="gone"/>
-
-            <TextView
+            <com.ogaclejapan.smarttablayout.SmartTabLayout
+                android:id="@+id/viewpagertab"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
+                android:clipToPadding="false"
                 android:layout_gravity="center_horizontal"
-                android:textSize="20dp"
-                android:text="No notification"
-                android:layout_marginTop="20dp"
-                android:id="@+id/noPost"
-                android:visibility="gone"/>
+                app:stl_defaultTabTextColor="@color/mainTitle"
+                app:stl_defaultTabTextHorizontalPadding="50dp"
+                app:stl_defaultTabTextSize="13dp"
+                app:stl_defaultTabTextMinWidth="180dp"
+                app:stl_dividerColor="@color/transparent"
+                app:stl_indicatorColor="#EFEFEF"
+                app:stl_indicatorCornerRadius="18dp"
+                app:stl_indicatorGravity="center"
+                app:stl_indicatorInterpolation="smart"
+                app:stl_indicatorThickness="33dp"
+                app:stl_indicatorWidth="180dp"
+                app:stl_underlineColor="@color/transparent"
+                app:stl_underlineThickness="0dp"
+                />
 
-            <android.support.v7.widget.RecyclerView
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/listNotification"
-                android:layout_margin="10dp"></android.support.v7.widget.RecyclerView>
+                />
 
         </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>

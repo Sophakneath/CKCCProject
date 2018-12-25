@@ -35,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,7 +135,10 @@ public class myLostFragment extends Fragment implements myLostAdapter.openDetail
     {
         progressBar.setVisibility(View.GONE);
         if(lostFounds.size() <= 0) noPost.setVisibility(View.VISIBLE);
-        else noPost.setVisibility(View.GONE);
+        else {
+            noPost.setVisibility(View.GONE);
+            Collections.reverse(lostFounds);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         lostList.setLayoutManager(layoutManager);
         myLostAdapter = new myLostAdapter(getContext(), lostFounds, user, saves);

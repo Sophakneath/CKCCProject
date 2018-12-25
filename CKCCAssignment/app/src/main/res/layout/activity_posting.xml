@@ -21,7 +21,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="95dp"
+                android:layout_height="71dp"
                 android:background="@color/mainColor"
                 android:visibility="visible"
                 >
@@ -29,10 +29,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="horizontal"
                     android:id="@+id/title1"
-                    android:layout_marginTop="28dp">
+                    android:layout_centerVertical="true">
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -68,7 +67,7 @@
                         android:id="@+id/notificationContainer">
 
                         <ImageView
-                            android:layout_width="33dp"
+                            android:layout_width="28dp"
                             android:layout_height="match_parent"
                             android:src="@drawable/notification"
                             android:id="@+id/notification"
@@ -138,7 +137,7 @@
             android:layout_gravity="bottom|right"
             android:layout_margin="20dp"
             app:srcCompat="@drawable/ic_add_black_24dp"
-            android:backgroundTint="@color/mainColor"
+            android:backgroundTint="#d53b6b"
             app:borderWidth="0dp"
             app:elevation="6dp"
             app:fabSize="normal"

@@ -40,6 +40,7 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
     String uid;
     DatabaseReference mDatabase;
     List<LostFound> lostFounds;
+    foundListAdapter foundListAdapter;
 
 
     public mySaveAdapter(Context context, List<SaveLostFound> saves, String uid)
@@ -59,10 +60,11 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull mySaveAdapter.ViewHolder holder, int position) {
         SaveLostFound lostFound = saves.get(position);
-        getSaveLostFound(lostFound, holder.found, holder.location, holder.contact, holder.star, holder.container);
+        getSaveLostFound(lostFound, holder.found, holder.location, holder.contact, holder.star, holder.container, holder.imagefound, holder.defaultpic);
         holder.more.setVisibility(View.GONE);
         holder.onSave.setVisibility(View.VISIBLE);
         holder.notsave.setVisibility(View.GONE);
+        foundListAdapter = new foundListAdapter();
 
         holder.save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +134,7 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
         });
     }
 
-    public void getSaveLostFound(SaveLostFound saveLostFound, TextView found, TextView location, TextView contact, ImageView star, CardView container)
+    public void getSaveLostFound(SaveLostFound saveLostFound, TextView found, TextView location, TextView contact, ImageView star, CardView container, ImageView picture, ImageView defaultpic)
     {
         if(saveLostFound.getId().startsWith("F"))
         {
@@ -149,6 +151,7 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
                         location.setText("Location : " + lostFound.getLocation());
                         contact.setText("Contact : " + lostFound.getContactNum());
                         if (lostFound.getReward() != null) star.setVisibility(View.VISIBLE);
+                        if(lostFound.getImage() != null){ foundListAdapter.getImage(picture, lostFound.getImage(), context); defaultpic.setVisibility(View.GONE); }
                         //Toast.makeText(context, "not found", Toast.LENGTH_SHORT).show();
                         //count = 1;
                     }
@@ -186,6 +189,7 @@ public class mySaveAdapter extends RecyclerView.Adapter<mySaveAdapter.ViewHolder
                         location.setText("Location : " + lostFound.getLocation());
                         contact.setText("Contact : " + lostFound.getContactNum());
                         if (lostFound.getReward() != null) star.setVisibility(View.VISIBLE);
+                        if(lostFound.getImage() != null){ foundListAdapter.getImage(picture, lostFound.getImage(), context); defaultpic.setVisibility(View.GONE); }
                         //count = 1;
                     }
                     else

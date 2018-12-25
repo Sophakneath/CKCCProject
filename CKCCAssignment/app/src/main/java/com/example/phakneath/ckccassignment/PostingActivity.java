@@ -65,8 +65,8 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     public static Activity activity;
     LoadingDialog dialog = new LoadingDialog();
     FrameLayout container;
-    PostDiscoverFragment postDiscoverFragment = new PostDiscoverFragment();
-    PostLostFragment postLostFragment = new PostLostFragment();
+    PostDiscoverFragment postDiscoverFragment;
+    PostLostFragment postLostFragment;
     FloatingActionButton add;
     ViewPager viewPager;
     SmartTabLayout viewPagerTab;
@@ -75,9 +75,9 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_posting);
+        postDiscoverFragment = new PostDiscoverFragment();
+        postLostFragment = new PostLostFragment();
 
         initView();
         activity = this;
@@ -210,8 +210,8 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     public void updateUI(String username, String imagePath, String extension)
     {
         name.setText(username);
-        if(imagePath != null && extension != null)
-        getImage(profile, imagePath+"."+extension, this);
+        if(imagePath != null)
+        getImage(profile, imagePath, this);
     }
 
     @Override

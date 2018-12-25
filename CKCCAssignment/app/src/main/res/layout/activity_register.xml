@@ -224,7 +224,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="16dp"
                     android:id="@+id/signup"
-                    android:layout_alignParentBottom="true"/>
+                    android:layout_alignParentBottom="true"
+                    android:translationZ="10dp"/>
 
             </RelativeLayout>
 

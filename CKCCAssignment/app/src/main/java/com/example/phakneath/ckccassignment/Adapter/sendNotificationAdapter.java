@@ -7,11 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.phakneath.ckccassignment.Model.Notification;
+import com.example.phakneath.ckccassignment.Model.User;
+import com.example.phakneath.ckccassignment.PostingActivity;
 import com.example.phakneath.ckccassignment.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,13 +23,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class notificationAdapter extends RecyclerView.Adapter<notificationAdapter.ViewHolder> {
+public class sendNotificationAdapter extends RecyclerView.Adapter<sendNotificationAdapter.ViewHolder> {
 
     List<Notification> notifications;
     Context context;
     DatabaseReference mDatabase;
+    PostingActivity postingActivity = new PostingActivity();
 
-    public notificationAdapter(Context context, List<Notification> notifications)
+    public sendNotificationAdapter(Context context, List<Notification> notifications)
     {
         this.context = context;
         this.notifications = notifications;
@@ -39,13 +40,13 @@ public class notificationAdapter extends RecyclerView.Adapter<notificationAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.notification_layout, parent, false);
-        return new notificationAdapter.ViewHolder(view);
+        return new sendNotificationAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notification notification = notifications.get(position);
-        getUsename(notification, holder.description);
+        getUsename(notification, holder.description, holder.profile);
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,15 +74,38 @@ public class notificationAdapter extends RecyclerView.Adapter<notificationAdapte
         }
     }
 
-    public void getUsename(Notification notification, TextView description)
+    public void getUsename(Notification notification, TextView description, CircleImageView profile)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child(notification.getPostOwnerID()).child("username").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("user").child(notification.getPostOwnerID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String sh;
-                sh = dataSnapshot.getValue(String.class) + " has found your item at " + notification.getLocation();
+                User user = dataSnapshot.getValue(User.class);
+                String sh="";
+                if(notification.getPostID().startsWith("F")) sh = "You sent to " + user.getUsername() + " saying you have lost your item at "+ notification.getLocation();
+                else if(notification.getPostID().startsWith("L")) sh = "You send to " + user.getUsername() + " saying you have found " + user.getUsername() + "'s item at "+ notification.getLocation();
                 description.setText(sh);
+                getMyImage(notification,profile);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getMyImage(Notification notification, CircleImageView profile)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child(notification.getFounderLosterID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                String sh;
+                postingActivity.getImage(profile,user.getImagePath(),context);
+
             }
 
             @Override

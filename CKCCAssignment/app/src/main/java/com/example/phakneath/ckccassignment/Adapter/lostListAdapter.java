@@ -42,11 +42,12 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
     private String uID;
     public myLostAdapter.editPost editPost;
     public foundListAdapter.deletePosts deletePosts;
-    private List<SaveLostFound> saves = new ArrayList<>();
+    private List<SaveLostFound> saves;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
+    foundListAdapter foundListAdapter;
 
     public lostListAdapter(Context context, List<LostFound> lostFounds, String uID)
     {
@@ -72,6 +73,7 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
     public void onBindViewHolder(@NonNull lostListAdapter.ViewHolder holder, int position) {
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
+        foundListAdapter = new foundListAdapter();
 
         LostFound lostFound = lostFounds.get(position);
         holder.found.setText("Lost : " + lostFound.getItem());
@@ -79,6 +81,8 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
         holder.contact.setText("Contact : " + lostFound.getContactNum());
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
         if(lostFound.getMyOwner().equals(uID)) holder.more.setVisibility(View.VISIBLE);
+
+        if(lostFound.getImage() != null){ foundListAdapter.getImage(holder.imagefound, lostFound.getImage(), context); holder.defaultpic.setVisibility(View.GONE); }
 
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());
@@ -226,6 +230,7 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
 
     public void getSaves(ImageView a, ImageView b, SaveLostFound lf)
     {
+        saves = new ArrayList<>();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase = mDatabase.child("Posting").child("individual").child(uid).child("save");
         mDatabase.addValueEventListener(new ValueEventListener() {

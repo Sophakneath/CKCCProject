@@ -28,7 +28,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:id="@+id/imageFound"
-                    android:background="@drawable/holderforpic" />
+                    android:background="@drawable/holderforpic"
+                    android:scaleType="centerCrop"/>
 
                 <ImageView
                     android:layout_width="65dp"
