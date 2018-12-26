@@ -259,7 +259,7 @@ public class ViewDiscoverFragment extends Fragment {
         if (CropImage.isExplicitCameraPermissionRequired(getContext())) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE);
         } else {
-            CropImage.startPickImageActivity(getActivity());
+            //CropImage.startPickImageActivity(getActivity());
             startCropImageActivity();
 
         }
@@ -290,8 +290,13 @@ public class ViewDiscoverFragment extends Fragment {
 
     private void startCropImageActivity(Uri imageUri) {
         CropImage.activity(imageUri)
-                .start(getActivity());
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(16,8)
+                .start(getContext(),this);
+
+
     }
+
 
     //permission for open gallery
     private String getFileExtension(Uri uri)

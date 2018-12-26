@@ -49,6 +49,7 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.example.phakneath.ckccassignment.OtherProfileActivity.ViewPagerAdapter;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -139,13 +140,22 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
             if (resultCode == Activity.RESULT_OK) {
+
                 viewDiscoverFragment.setImage(result);
                 viewLostFragment.setImage(result);
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
 
