@@ -6,6 +6,7 @@ public class SaveLostFound implements Serializable{
 
     private String id;
     private String myOwnerID;
+    private long time;
 
     public String getId() {
         return id;
@@ -21,5 +22,13 @@ public class SaveLostFound implements Serializable{
 
     public void setMyOwnerID(String myOwnerID) {
         this.myOwnerID = myOwnerID;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

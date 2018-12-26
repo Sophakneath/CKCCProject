@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.phakneath.ckccassignment.Dialog.LoadingDialog;
 import com.example.phakneath.ckccassignment.LostFoundActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
@@ -89,6 +90,7 @@ public class ViewDiscoverFragment extends Fragment {
     Button post;
     int count;
     Boolean isFoundFragment = true;
+    LoadingDialog loadingDialog;
 
     private String mParam1;
     private String mParam2;
@@ -141,6 +143,7 @@ public class ViewDiscoverFragment extends Fragment {
         des = view.findViewById(R.id.fdes);
         rewardContainer = view.findViewById(R.id.frewardContainer);
         setType(isFoundFragment);
+        loadingDialog = new LoadingDialog();
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,6 +253,7 @@ public class ViewDiscoverFragment extends Fragment {
             Log.d("test",result.getUri().getPath().toString());
             if(tempFile.exists()){
               image.setImageURI(result.getUri());
+              defaultpic.setVisibility(View.GONE);
               uri = result.getUri();
               pathImage = uri.getLastPathSegment(); //+ System.currentTimeMillis();
               //extension = getFileExtension(uri);
@@ -269,8 +273,6 @@ public class ViewDiscoverFragment extends Fragment {
         }
 
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -307,6 +309,7 @@ public class ViewDiscoverFragment extends Fragment {
 
     public void postLost()
     {
+        loadingDialog.show(getActivity().getFragmentManager(), "postDiscover");
         String item = found.getText().toString();
         String loc = location.getText().toString();
         String con = contact.getText().toString();
@@ -316,14 +319,18 @@ public class ViewDiscoverFragment extends Fragment {
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, pathImage, null);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, pathImage, null, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
-                Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                if(pathImage == null) {
+                    loadingDialog.dismiss();
+                    LostFoundActivity.activity.finish();
+                    Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -334,19 +341,24 @@ public class ViewDiscoverFragment extends Fragment {
     }
     public void updateUser()
     {
+        loadingDialog.show(getActivity().getFragmentManager(), "postDiscover");
         String item = found.getText().toString();
         String loc = location.getText().toString();
         String con = contact.getText().toString();
         String rem = remark.getText().toString();
         String id = "F" + uID + System.currentTimeMillis();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, pathImage, null);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, pathImage, null, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
-                //Toast.makeText(getActivity().getBaseContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                if(pathImage == null) {
+                    loadingDialog.dismiss();
+                    LostFoundActivity.activity.finish();
+                    Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -369,6 +381,7 @@ public class ViewDiscoverFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             LostFoundActivity.activity.finish();
+                            loadingDialog.dismiss();
                             Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -397,6 +410,7 @@ public class ViewDiscoverFragment extends Fragment {
         {
             if (isFoundFragment){
                 updateUser();
+                if(pathImage != null)
                 if(mUploadTask == null || !mUploadTask.isInProgress())
                     uploadImage(uri,pathImage,extension);
             }else{
@@ -406,6 +420,7 @@ public class ViewDiscoverFragment extends Fragment {
                 }
                 else {
                     postLost();
+                    if(pathImage != null)
                     if(mUploadTask == null || !mUploadTask.isInProgress())
                         uploadImage(uri,pathImage,extension);
                 }

@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.PointerIcon;
@@ -26,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
@@ -33,6 +35,7 @@ import com.example.phakneath.ckccassignment.Dialog.LoadingDialog;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Fragment.PostLostFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
+import com.example.phakneath.ckccassignment.Model.Notification;
 import com.example.phakneath.ckccassignment.sharePreferences.UserPreferences;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,10 +50,13 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostingActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
-
     Button logout;
     FirebaseAuth mAuth;
     DrawerLayout drawerLayout;
@@ -71,6 +77,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     ViewPager viewPager;
     SmartTabLayout viewPagerTab;
     FrameLayout containerNotification;
+    public static TextView badgeCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +100,12 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
 
         getUser();
         setFragment();
+        getBadgeCount();
+        /*Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("d-M-y-h-mm-ss");
+        String formattedDate = df.format(c);
+        //Toast.makeText(this, formattedDate +"\n" + c, Toast.LENGTH_SHORT).show();
+        Log.d("oooooo", "onCreate: " + formattedDate +"\n" + c);*/
     }
 
     @Override
@@ -117,6 +130,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
         containerNotification = findViewById(R.id.notificationContainer);
+        badgeCount = findViewById(R.id.badgeCount);
     }
 
 
@@ -244,5 +258,35 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         adapter.addFrag(postDiscoverFragment, "DISCOVER");
         adapter.addFrag(postLostFragment, "LOST");
         viewPager.setAdapter(adapter);
+    }
+
+    public void getBadgeCount()
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Posting").child("individual").child(id).child("notification").child("receive").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int count = 0;
+                Notification notification = new Notification();
+                for (DataSnapshot d: dataSnapshot.getChildren())
+                {
+                    notification = d.getValue(Notification.class);
+                    try{
+                        if (notification.getStatus().equals("new")) {
+                            count++;
+                        }
+                    }catch(Exception e){
+                        Log.d("oooooo", "onDataChange: "+e.getMessage());
+                    }
+                }
+
+                badgeCount.setText("" + count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

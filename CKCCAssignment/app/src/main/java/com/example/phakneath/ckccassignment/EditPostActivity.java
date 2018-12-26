@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
+import com.example.phakneath.ckccassignment.Dialog.LoadingDialog;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +69,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
     int count=0;
     Uri uri, mCropImageUri;
     foundListAdapter foundListAdapter;
+    LoadingDialog loadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +85,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         back.setOnClickListener(this::onClick);
         picture.setOnClickListener(this::onClick);
         defaultpic.setOnClickListener(this::onClick);
+        loadingDialog = new LoadingDialog();
 
         mAuth = FirebaseAuth.getInstance();
         uID = mAuth.getCurrentUser().getUid();
@@ -181,17 +184,22 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
 
     public void updateUser()
     {
-        progress.setVisibility(View.VISIBLE);
+        //progress.setVisibility(View.VISIBLE);
+        loadingDialog.show(getFragmentManager(), "editLoading");
         String items = item.getText().toString();
         String loc = location.getText().toString();
         String con = contact.getText().toString();
         String rem = null;
         String id = lostFound.getId();
         String rewardDes = null;
+        long time = lostFound.getTime();
+        String image;
+        if(pathImage == null) image = lostFound.getImage();
+        else image = pathImage;
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, items,loc,con,rem,rewardDes, uID, null, null);
+        LostFound lostFound = new LostFound(id, items,loc,con,rem,rewardDes, uID, image, null, time);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(lostFound.getId().startsWith("F"))
@@ -200,13 +208,16 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     mDatabase.child("Posting").child("founds").child(id).setValue(lostFound);
-                    finish();
-                    Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                    if(pathImage == null) {
+                        loadingDialog.dismiss();
+                        Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -217,13 +228,16 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     mDatabase.child("Posting").child("losts").child(id).setValue(lostFound);
-                    finish();
-                    Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                    if(pathImage == null) {
+                        loadingDialog.dismiss();
+                        Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -251,14 +265,20 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onComplete(@NonNull Task task) {
                             updateUser();
-                            Toast.makeText(EditPostActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
+                            loadingDialog.dismiss();
+                            Toast.makeText(EditPostActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
+                else
+                {
+                    updateUser();
+                    //Toast.makeText(EditPostActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -340,19 +360,17 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         String p = lostFound.getImage();
         if(uri != null)
         {
-            ref = storageReference.child("posting/").child( imagePath);
+            ref = storageReference.child("posting/").child(imagePath);
             mUploadTask = ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            ref = storageReference.child("posting/").child(p);
-                            ref.delete();
+                            if(p != null) {
+                                ref = storageReference.child("posting/").child(p);
+                                ref.delete();
+                            }
                             Log.d("uplaod", "onSuccess: " + taskSnapshot.toString());
-
-
-                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("user").child(uID).child("imagePath").setValue(imagePath);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

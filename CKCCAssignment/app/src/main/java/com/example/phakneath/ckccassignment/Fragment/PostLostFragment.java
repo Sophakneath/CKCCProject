@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -108,16 +109,6 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
         progressBaរ.setVisibility(View.VISIBLE);
         noPost = view. findViewById(R.id.notpost);
 
-        /*lostFounds = new ArrayList<>();
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Bag", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-        lostFounds.add(new LostFound("001", "Phone", "PP", "010", "Hello",null));
-
-        setAdapter();
-        lostListAdapter.openDetail = this::onOpenDetailLostPost;*/
         getUser();
         return view;
     }
@@ -176,13 +167,13 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
     public void getUser()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("losts").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> allLostPosts = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     allLostPosts.add(lostFound);
                 }

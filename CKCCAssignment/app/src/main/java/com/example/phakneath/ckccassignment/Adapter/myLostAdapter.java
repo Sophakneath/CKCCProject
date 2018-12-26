@@ -118,31 +118,13 @@ public class myLostAdapter extends RecyclerView.Adapter<myLostAdapter.ViewHolder
             }
         });
 
-        /*holder.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveLostFound saveLostFound = new SaveLostFound();
-                saveLostFound.setId(lostFound.getId());
-                saveLostFound.setMyOwnerID(lostFound.getMyOwner());
-                if(count == 0)
-                {
-                    count = 1;
-                    onSave(saveLostFound, holder.onSave,holder.notsave);
-                }
-                else if(count == 1)
-                {
-                    count = 0;
-                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
-                }
-            }
-        });*/
-
         holder.onSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SaveLostFound saveLostFound = new SaveLostFound();
                 saveLostFound.setId(lostFound.getId());
                 saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                saveLostFound.setTime(lostFound.getTime());
                 onUnSave(saveLostFound, holder.onSave, holder.notsave);
             }
         });
@@ -153,6 +135,7 @@ public class myLostAdapter extends RecyclerView.Adapter<myLostAdapter.ViewHolder
                 SaveLostFound saveLostFound = new SaveLostFound();
                 saveLostFound.setId(lostFound.getId());
                 saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                saveLostFound.setTime(System.currentTimeMillis());
                 onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });

@@ -1,6 +1,7 @@
 package com.example.phakneath.ckccassignment.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,19 +16,21 @@ import android.widget.TextView;
 
 import com.example.phakneath.ckccassignment.Adapter.receiveNotificationAdapter;
 import com.example.phakneath.ckccassignment.Model.Notification;
+import com.example.phakneath.ckccassignment.NotificationDetailActivity;
 import com.example.phakneath.ckccassignment.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class receiveNotificationFragment extends Fragment {
+public class receiveNotificationFragment extends Fragment implements receiveNotificationAdapter.onOpenDetailNotification{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -114,13 +117,15 @@ public class receiveNotificationFragment extends Fragment {
         notificationContainer.setLayoutManager(layoutManager);
         receiveNotificationAdapter = new receiveNotificationAdapter(getContext(), notifications);
         notificationContainer.setAdapter(receiveNotificationAdapter);
+        receiveNotificationAdapter.onOpenDetailNotification = this::onClickNotification;
     }
 
     public void getNotification()
     {
         progress.setVisibility(View.VISIBLE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Posting").child("individual").child(uID).child("notification").child("receive").addValueEventListener(new ValueEventListener() {
+        Query myTopPostsQuery = mDatabase.child("Posting").child("individual").child(uID).child("notification").child("receive").orderByChild("time");
+        myTopPostsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Notification> notifications = new ArrayList<>();
@@ -145,6 +150,15 @@ public class receiveNotificationFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClickNotification(Notification notification) {
+        Intent intent = new Intent(getContext(), NotificationDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("notification", notification);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     public interface OnFragmentInteractionListener {

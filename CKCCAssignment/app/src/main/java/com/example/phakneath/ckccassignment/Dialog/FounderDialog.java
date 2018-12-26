@@ -29,7 +29,7 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
     SaveLostFound saveLostFound;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
-    String uID;
+    String uID, status;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -79,8 +79,9 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
         tlocation = location.getText().toString();
         tcontact = contact.getText().toString();
         tremark = remark.getText().toString();
+        status = "new";
         String id = "N" + uID + System.currentTimeMillis();
-        Notification notification = new Notification(id,tlocation,tcontact,tremark,saveLostFound.getId(),saveLostFound.getMyOwnerID(),uID);
+        Notification notification = new Notification(id,tlocation,tcontact,tremark,saveLostFound.getId(),saveLostFound.getMyOwnerID(),uID, status, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("notification").child("receive").child(id).setValue(notification);
