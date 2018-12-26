@@ -87,9 +87,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     writeUser(String.valueOf(id));
                     new FancyAlertDialog.Builder(RegisterActivity.this)
                             .setTitle("Verification")
-                            .setBackgroundColor(Color.parseColor("#00C4CC"))  //Don't pass R.color.colorvalue
+                            .setBackgroundColor(Color.parseColor("#ff4081"))  //Don't pass R.color.colorvalue
                             .setMessage("Thank you for signing in, Please verify your email before login !")
-                            .setPositiveBtnBackground(Color.parseColor("#00C4CC"))  //Don't pass R.color.colorvalue
+                            .setPositiveBtnBackground(Color.parseColor("#ff4081"))  //Don't pass R.color.colorvalue
                             .setPositiveBtnText("VERIFY")
                             .setNegativeBtnText("Cancel")
                             .setAnimation(Animation.SIDE)

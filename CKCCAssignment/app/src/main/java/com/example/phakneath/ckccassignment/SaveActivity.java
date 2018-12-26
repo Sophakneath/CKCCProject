@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -87,8 +88,8 @@ public class SaveActivity extends AppCompatActivity implements View.OnClickListe
     public void getSaves()
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(uid).child("save");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("individual").child(uid).child("save").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

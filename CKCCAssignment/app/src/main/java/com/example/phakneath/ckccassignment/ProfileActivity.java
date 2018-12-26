@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -110,18 +111,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 String tphoneNum = dataSnapshot.child("phoneNum").getValue(String.class);
                 String temail = dataSnapshot.child("email").getValue(String.class);
 
-                /*List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
-                LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tlosts.add(lostFound);
-                }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tfounds.add(lostFound);
-                }*/
-
                 user.setUsername(tusername);
                 user.setImagePath(timagepath);
                 user.setExtension(textension);
@@ -142,29 +131,44 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void getLostsFounds(User user)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(uid);
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("individual").child(uid).child("losts").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tlosts.add(lostFound);
                 }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
+
+                user.setLosts(tlosts);
+                getFounds(user);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getFounds(User user)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Query query = mDatabase.child("Posting").child("individual").child(uid).child("founds").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<LostFound> tfounds = new ArrayList<>();
+                LostFound lostFound = new LostFound();
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tfounds.add(lostFound);
                 }
 
-                user.setLosts(tlosts);
                 user.setFounds(tfounds);
-                //.Toast.makeText(ProfileActivity.this, "" + tfounds.size() + "" + tlosts.size(), Toast.LENGTH_SHORT).show();
                 updateUI(user);
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -217,4 +221,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         adapter.addFrag(myLostFragment, "LOST");
         viewPager.setAdapter(adapter);
     }
+
+
 }

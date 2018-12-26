@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());
         saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+        saveLostFound.setTime(lostFound.getTime());
         getSaves(holder.onSave, holder.notsave, saveLostFound);
 
         holder.more.setOnClickListener(new View.OnClickListener() {
@@ -124,22 +126,6 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
             }
         });
 
-        /*holder.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(count == 0)
-                {
-                    count = 1;
-                    onSave(saveLostFound, holder.onSave,holder.notsave);
-                }
-                else if(count == 1)
-                {
-                    count = 0;
-                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
-                }
-            }
-        });*/
-
         holder.onSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +136,7 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
         holder.notsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveLostFound.setTime(System.currentTimeMillis());
                 onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });
@@ -232,8 +219,8 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
     {
         saves = new ArrayList<>();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(uid).child("save");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("individual").child(uid).child("save").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

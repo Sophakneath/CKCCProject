@@ -206,8 +206,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            ref = storageReference.child("profile/").child(p);
-                            ref.delete();
+                            if(p != null) {
+                                ref = storageReference.child("profile/").child(p);
+                                ref.delete();
+                            }
                             Log.d("uplaod", "onSuccess: " + taskSnapshot.toString());
 
 

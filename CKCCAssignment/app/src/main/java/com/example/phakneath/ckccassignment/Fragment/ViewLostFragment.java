@@ -175,7 +175,7 @@ public class ViewLostFragment extends Fragment {
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {

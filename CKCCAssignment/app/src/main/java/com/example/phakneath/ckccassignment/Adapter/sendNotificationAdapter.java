@@ -29,6 +29,7 @@ public class sendNotificationAdapter extends RecyclerView.Adapter<sendNotificati
     Context context;
     DatabaseReference mDatabase;
     PostingActivity postingActivity = new PostingActivity();
+    public receiveNotificationAdapter.onOpenDetailNotification onOpenDetailNotification;
 
     public sendNotificationAdapter(Context context, List<Notification> notifications)
     {
@@ -50,7 +51,7 @@ public class sendNotificationAdapter extends RecyclerView.Adapter<sendNotificati
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onOpenDetailNotification.onClickNotification(notifications.get(position));
             }
         });
     }

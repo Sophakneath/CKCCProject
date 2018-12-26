@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -196,30 +197,44 @@ public class myLostFragment extends Fragment implements myLostAdapter.openDetail
     public void getLosts(User user)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(uid);
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query= mDatabase.child("Posting").child("individual").child(uid).child("losts").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
-                List<SaveLostFound> saves = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                SaveLostFound saveLostFound = new SaveLostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tlosts.add(lostFound);
                 }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tfounds.add(lostFound);
-                }
-                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
+
+                getSaves(user, tlosts);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getSaves(User user, List<LostFound> losts)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Query query= mDatabase.child("Posting").child("individual").child(uid).child("save").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<SaveLostFound> saves = new ArrayList<>();
+                SaveLostFound saveLostFound = new SaveLostFound();
+
+                for(DataSnapshot d: dataSnapshot.getChildren())
                 {
                     saveLostFound = d.getValue(SaveLostFound.class);
                     saves.add(saveLostFound);
                 }
 
-                setAdapter(tlosts, user, saves);
+                setAdapter(losts, user, saves);
                 myLostAdapter.openDetail = myLostFragment.this::onOpenDetailLost;
                 myLostAdapter.editPost = myLostFragment.this::onEditPost;
                 myLostAdapter.deletePosts = myLostFragment.this::onDeletePosts;

@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -72,9 +73,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
-        save.setOnClickListener(this::onClick);
         gotoProfile.setOnClickListener(this::onClick);
         founder.setOnClickListener(this::onClick);
+        onSave.setOnClickListener(this::onClick);
+        notsave.setOnClickListener(this::onClick);
         getUser();
     }
 
@@ -378,15 +380,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void getSaves(LostFound lf)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(uid);
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("individual").child(uid).child("save").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 List<LostFound> savess = new ArrayList<>();
                 LostFound lostFound = new LostFound();
 
-                for(DataSnapshot d: dataSnapshot.child("save").getChildren())
+                for(DataSnapshot d: dataSnapshot.getChildren())
                 {
                     lostFound = d.getValue(LostFound.class);
                     savess.add(lostFound);
@@ -419,7 +421,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             saveLostFound = new SaveLostFound();
             saveLostFound.setId(lostFound.getId());
             saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+            saveLostFound.setTime(System.currentTimeMillis());
         }
+        else saveLostFound.setTime(System.currentTimeMillis());
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uid).child("save").child(saveLostFound.getId()).setValue(saveLostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -443,6 +447,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             saveLostFound = new SaveLostFound();
             saveLostFound.setId(lostFound.getId());
             saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+            saveLostFound.setTime(System.currentTimeMillis());
         }
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uid).child("save").child(saveLostFound.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -507,23 +512,44 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void getFoundsLosts(User otherUser)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase = mDatabase.child("Posting").child("individual").child(lostFound.getMyOwner());
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query query = mDatabase.child("Posting").child("individual").child(lostFound.getMyOwner()).child("losts").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
                 LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tlosts.add(lostFound);
                 }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
+
+                otherUser.setLosts(tlosts);
+                getFounds(otherUser);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void getFounds(User otherUser)
+    {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Query query = mDatabase.child("Posting").child("individual").child(lostFound.getMyOwner()).child("founds").orderByChild("time");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<LostFound> tfounds = new ArrayList<>();
+                LostFound lostFound = new LostFound();
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
                     tfounds.add(lostFound);
                 }
 
-                otherUser.setLosts(tlosts);
                 otherUser.setFounds(tfounds);
                 otherProfile(otherUser);
 
@@ -543,18 +569,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         {
             finish();
         }
-        else if(v == save)
+        else if(v == onSave)
         {
-            if(count == 0)
-            {
-                count = 1;
-                onSave(saveLostFound);
-            }
-            else if(count == 1)
-            {
-                count = 0;
-                onUnSave(saveLostFound);
-            }
+            onUnSave(saveLostFound);
+        }
+        else if(v == notsave)
+        {
+            onSave(saveLostFound);
         }
         else if(v == gotoProfile)
         {
@@ -574,6 +595,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 SaveLostFound saveLostFound = new SaveLostFound();
                 saveLostFound.setMyOwnerID(lostFound.getMyOwner());
                 saveLostFound.setId(lostFound.getId());
+                saveLostFound.setTime(lostFound.getTime());
                 dialog.setData(saveLostFound);
             }
             else dialog.setData(saveLostFound);

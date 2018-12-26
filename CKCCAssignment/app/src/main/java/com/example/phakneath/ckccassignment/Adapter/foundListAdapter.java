@@ -90,6 +90,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());
         saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+        saveLostFound.setTime(lostFound.getTime());
         getSaves(holder.onSave, holder.notsave, saveLostFound);
 
         holder.more.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +139,7 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         holder.notsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveLostFound.setTime(System.currentTimeMillis());
                 onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });

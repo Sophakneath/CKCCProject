@@ -32,7 +32,8 @@
             android:name=".Main2Activity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme" />
-        <activity android:name=".SettingActivity"
+        <activity
+            android:name=".SettingActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LostFoundActivity"
@@ -50,7 +51,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".OtherProfileActivity" />
-        <activity android:name=".NotificationActivity"></activity>
+        <activity android:name=".NotificationActivity" />
+        <activity android:name=".NotificationDetailActivity"></activity>
     </application>
 
 </manifest>

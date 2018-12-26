@@ -80,6 +80,7 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());
         saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+        saveLostFound.setTime(lostFound.getTime());
         getSaves(holder.onSave, holder.notsave, saveLostFound);
 
         holder.container.setOnClickListener(new View.OnClickListener() {
@@ -89,22 +90,6 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
                 openDetail.onOpenDetailLostPost(lostFounds.get(position));
             }
         });
-
-        /*holder.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(count == 0)
-                {
-                    count = 1;
-                    onSave(saveLostFound, holder.onSave,holder.notsave);
-                }
-                else if(count == 1)
-                {
-                    count = 0;
-                    onUnSave(saveLostFound, holder.onSave, holder.notsave);
-                }
-            }
-        });*/
 
         holder.onSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +101,7 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
         holder.notsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveLostFound.setTime(System.currentTimeMillis());
                 onSave(saveLostFound, holder.onSave,holder.notsave);
             }
         });
