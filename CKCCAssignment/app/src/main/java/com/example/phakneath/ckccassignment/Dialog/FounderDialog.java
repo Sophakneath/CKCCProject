@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -80,9 +81,16 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
         }
         else if(v == submit)
         {
-            submitData();
-            dismiss();
-            Toast.makeText(getContext(), "Submit Successful", Toast.LENGTH_SHORT).show();
+            if(!TextUtils.isEmpty(location.getText().toString().trim()) && !TextUtils.isEmpty(contact.getText().toString().trim()) && !TextUtils.isEmpty(remark.getText().toString().trim()))
+            {
+                submitData();
+                dismiss();
+                Toast.makeText(getContext(), "Submit Successful", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(getContext(), "Please fill all above information", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

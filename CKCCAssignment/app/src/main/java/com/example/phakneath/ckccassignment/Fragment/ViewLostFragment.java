@@ -174,8 +174,8 @@ public class ViewLostFragment extends Fragment {
         String id = "L" + uID + System.currentTimeMillis();
         String rewardDes = null;
 
-        if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
-        if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
+        if(!TextUtils.isEmpty(remark.getText().toString().trim())) rem = remark.getText().toString();
+        if(!TextUtils.isEmpty(reward.getText().toString().trim())) rewardDes = reward.getText().toString();
         LostFound lostFound = new LostFound(id, AppSingleton.getInstance().getPlayerId(), item,loc,con,rem,rewardDes, uID, null, null, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
