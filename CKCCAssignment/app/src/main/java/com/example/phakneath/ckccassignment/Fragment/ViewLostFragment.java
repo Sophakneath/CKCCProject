@@ -22,6 +22,7 @@ import com.example.phakneath.ckccassignment.LostFoundActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.PostingActivity;
 import com.example.phakneath.ckccassignment.R;
+import com.example.phakneath.ckccassignment.sharePreferences.AppSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -175,7 +176,7 @@ public class ViewLostFragment extends Fragment {
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null, System.currentTimeMillis());
+        LostFound lostFound = new LostFound(id, AppSingleton.getInstance().getPlayerId(), item,loc,con,rem,rewardDes, uID, null, null, System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {

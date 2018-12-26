@@ -41,6 +41,7 @@ import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.PostingActivity;
 import com.example.phakneath.ckccassignment.R;
+import com.example.phakneath.ckccassignment.sharePreferences.AppSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -318,14 +319,13 @@ public class ViewDiscoverFragment extends Fragment {
         String item = found.getText().toString();
         String loc = location.getText().toString();
         String con = contact.getText().toString();
-        String rem = null;
+        String rem = remark.getText().toString();
         String id = "L" + uID + System.currentTimeMillis();
-        String rewardDes = null;
+        String rewardDes = reward.getText().toString();
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, pathImage, null, System.currentTimeMillis());
-
+        LostFound lostFound = new LostFound(id, item, loc, con, rem, rewardDes, uID, pathImage, null, AppSingleton.getInstance().getPlayerId(),System.currentTimeMillis());
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -352,7 +352,7 @@ public class ViewDiscoverFragment extends Fragment {
         String con = contact.getText().toString();
         String rem = remark.getText().toString();
         String id = "F" + uID + System.currentTimeMillis();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, pathImage, null, System.currentTimeMillis());
+        LostFound lostFound = new LostFound(id, item, loc, con, rem, null, uID, pathImage, null, AppSingleton.getInstance().getPlayerId(),System.currentTimeMillis());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {

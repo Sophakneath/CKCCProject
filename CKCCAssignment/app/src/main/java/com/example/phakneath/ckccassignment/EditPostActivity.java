@@ -26,6 +26,7 @@ import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Dialog.LoadingDialog;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
+import com.example.phakneath.ckccassignment.sharePreferences.AppSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -199,7 +200,7 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, items,loc,con,rem,rewardDes, uID, image, null, time);
+        LostFound lostFound = new LostFound(id, AppSingleton.getInstance().getPlayerId(), items,loc,con,rem,rewardDes, uID, image, null, time);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(lostFound.getId().startsWith("F"))

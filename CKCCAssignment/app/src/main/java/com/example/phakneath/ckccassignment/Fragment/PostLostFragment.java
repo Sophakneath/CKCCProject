@@ -175,6 +175,7 @@ public class PostLostFragment extends Fragment implements lostListAdapter.openDe
                 LostFound lostFound = new LostFound();
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
                     lostFound = d.getValue(LostFound.class);
+
                     allLostPosts.add(lostFound);
                 }
 

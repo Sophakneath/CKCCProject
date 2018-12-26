@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,12 +14,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.Notification;
 import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.onesignal.OneSignal;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FounderDialog extends DialogFragment implements View.OnClickListener{
 
@@ -30,6 +39,7 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uID, status;
+    LostFound lostFound;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -59,7 +69,9 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
     {
         this.saveLostFound = saveLostFound;
     }
-
+    public void setLostFound(LostFound lostFound){
+        this.lostFound = lostFound;
+    }
     @Override
     public void onClick(View v) {
         if(v == cancel)
@@ -86,5 +98,23 @@ public class FounderDialog extends DialogFragment implements View.OnClickListene
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(saveLostFound.getMyOwnerID()).child("notification").child("receive").child(id).setValue(notification);
         mDatabase.child("Posting").child("individual").child(uID).child("notification").child("send").child(id).setValue(notification);
+
+        FirebaseDatabase fdb = FirebaseDatabase.getInstance();
+        fdb.getReference("user/"+lostFound.getMyOwner()+"/playerId").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String playerID = dataSnapshot.getValue(String.class);
+                try {
+                    OneSignal.postNotification(new JSONObject("{'title':'Item Found','contents': {'en':'The item in the post \""+lostFound.getItem()+"\" has been found'}, 'include_player_ids': ['" + playerID+ "']}"), null);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

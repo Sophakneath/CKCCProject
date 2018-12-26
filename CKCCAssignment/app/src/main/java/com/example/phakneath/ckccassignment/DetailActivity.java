@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.onesignal.OneSignal;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,11 +105,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     mDatabase.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String id = dataSnapshot.child("id").getValue(String.class);
+                            String email = dataSnapshot.child("email").getValue(String.class);
+                            String phone = dataSnapshot.child("phoneNum").getValue(String.class);
                             String tusername = dataSnapshot.child("username").getValue(String.class);
                             String timagepath = dataSnapshot.child("imagePath").getValue(String.class);
                             String textension = dataSnapshot.child("extension").getValue(String.class);
+                            String playerId = dataSnapshot.child("playerId").getValue(String.class);
+                            user = new User(id,playerId, tusername, email, phone, null, null, timagepath, textension, null);
 
-                            user = new User(null, tusername, null, null, null, null, timagepath, textension, null);
                             updateUI(lostFound, user);
                         }
 
@@ -167,11 +176,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 mDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String id = dataSnapshot.child("id").getValue(String.class);
+                        String email = dataSnapshot.child("email").getValue(String.class);
+                        String phone = dataSnapshot.child("phoneNum").getValue(String.class);
                         String tusername = dataSnapshot.child("username").getValue(String.class);
                         String timagepath = dataSnapshot.child("imagePath").getValue(String.class);
                         String textension = dataSnapshot.child("extension").getValue(String.class);
-
-                        user = new User(null, tusername, null, null, null, null, timagepath, textension, null);
+                        String playerId = dataSnapshot.child("playerId").getValue(String.class);
+                        user = new User(id,playerId, tusername, email, phone, null, null, timagepath, textension, null);
                         updateUI(lostFound, user);
                     }
 
@@ -597,6 +609,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 saveLostFound.setId(lostFound.getId());
                 saveLostFound.setTime(lostFound.getTime());
                 dialog.setData(saveLostFound);
+                dialog.setLostFound(lostFound);
+
+
             }
             else dialog.setData(saveLostFound);
 

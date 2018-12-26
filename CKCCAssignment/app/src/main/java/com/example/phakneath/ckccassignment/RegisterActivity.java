@@ -21,12 +21,14 @@ import android.widget.Toast;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
+import com.example.phakneath.ckccassignment.sharePreferences.AppSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.onesignal.OneSignal;
 import com.shashank.sony.fancydialoglib.Animation;
 import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
@@ -41,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     EditText username, email, phoneNum, password;
     Button signup;
     TextView gotoLogin;
-    private String id, name, myEmail, myPhoneNum;
+    private String id, name, myEmail, myPhoneNum,playerId;
     private String receiveToken, receiveEmail;
     DatabaseReference mDatabase;
     ProgressBar progressBar;
@@ -57,6 +59,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         signup.setOnClickListener(this::onClick);
         gotoLogin.setOnClickListener(this::onClick);
         //phoneNum.requestFocusFromTouch();
+        playerId = OneSignal.getPermissionSubscriptionState().getSubscriptionStatus().getUserId();
+        AppSingleton.getInstance().setPlayerId(playerId);
     }
 
     public void initView()
@@ -140,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         List<SaveLostFound> saves = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        User user = new User(id,name,myEmail,myPhoneNum,losts,founds, null, null,saves);
+        User user = new User(id,playerId,name,myEmail,myPhoneNum,losts,founds, null, null,saves);
         mDatabase.child("user").child(id).setValue(user);
     }
 

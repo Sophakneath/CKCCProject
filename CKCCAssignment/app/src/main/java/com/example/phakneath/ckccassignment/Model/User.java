@@ -16,11 +16,12 @@ public class User implements Serializable {
     private List<LostFound> founds;
     private String imagePath;
     private String extension;
+    private String playerId;
     private List<SaveLostFound> save;
 
     public User(){}
 
-    public User(String id, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension, List<SaveLostFound> save) {
+    public User(String id,String playerId, String username, String email, String phoneNum, List<LostFound> losts, List<LostFound> founds, String imagePath, String extension, List<SaveLostFound> save) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -30,8 +31,16 @@ public class User implements Serializable {
         this.imagePath = imagePath;
         this.extension = extension;
         this.save = save;
+        this.playerId = playerId;
     }
 
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
     public String getId() {
         return id;
     }
