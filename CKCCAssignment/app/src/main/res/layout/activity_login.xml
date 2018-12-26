@@ -151,7 +151,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="16dp"
                     android:id="@+id/login"
-                    android:layout_alignParentBottom="true" />
+                    android:layout_alignParentBottom="true"
+                    android:translationZ="10dp"/>
             </RelativeLayout>
 
             <TextView
@@ -170,7 +171,7 @@
                 android:indeterminateDrawable="@drawable/progresscolor"
                 android:visibility="gone"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="30dp"/>
 
         </LinearLayout>
     </ScrollView>

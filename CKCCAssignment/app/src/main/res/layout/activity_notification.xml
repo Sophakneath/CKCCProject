@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditEmailActivity"
+    tools:context=".NotificationActivity"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -38,52 +38,51 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="SETTING"
+                android:text="NOTIFICATION"
                 android:textSize="25dp"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:id="@+id/title"
                 android:gravity="center"
                 android:layout_weight="1"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:text=" Save"
-                android:textColor="@color/white"
-                android:id="@+id/setting"
-                android:textSize="23dp"
-                android:layout_marginRight="8dp"
-                android:gravity="center_vertical"
-                />
+                android:textStyle="bold"
+                android:layout_marginRight="67dp"/>
 
         </LinearLayout>
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp">
-
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#ececec"
-            android:id="@+id/email"
-            android:textSize="17dp"
-            android:textColor="@color/mainTitle"
-            android:textStyle="bold"
-            android:text=""
-            android:paddingLeft="80dp"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/myemail"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"/>
-    </RelativeLayout>
+            <com.ogaclejapan.smarttablayout.SmartTabLayout
+                android:id="@+id/viewpagertab"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:clipToPadding="false"
+                android:layout_gravity="center_horizontal"
+                app:stl_defaultTabTextColor="@color/mainTitle"
+                app:stl_defaultTabTextHorizontalPadding="50dp"
+                app:stl_defaultTabTextSize="13dp"
+                app:stl_defaultTabTextMinWidth="180dp"
+                app:stl_dividerColor="@color/transparent"
+                app:stl_indicatorColor="#EFEFEF"
+                app:stl_indicatorCornerRadius="18dp"
+                app:stl_indicatorGravity="center"
+                app:stl_indicatorInterpolation="smart"
+                app:stl_indicatorThickness="33dp"
+                app:stl_indicatorWidth="180dp"
+                app:stl_underlineColor="@color/transparent"
+                app:stl_underlineThickness="0dp"
+                />
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
 
 </LinearLayout>

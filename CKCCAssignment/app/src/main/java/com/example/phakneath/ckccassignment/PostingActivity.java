@@ -65,19 +65,19 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     public static Activity activity;
     LoadingDialog dialog = new LoadingDialog();
     FrameLayout container;
-    PostDiscoverFragment postDiscoverFragment = new PostDiscoverFragment();
-    PostLostFragment postLostFragment = new PostLostFragment();
+    PostDiscoverFragment postDiscoverFragment;
+    PostLostFragment postLostFragment;
     FloatingActionButton add;
     ViewPager viewPager;
     SmartTabLayout viewPagerTab;
-    FragmentPagerItemAdapter adapter;
+    FrameLayout containerNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_posting);
+        postDiscoverFragment = new PostDiscoverFragment();
+        postLostFragment = new PostLostFragment();
 
         initView();
         activity = this;
@@ -89,6 +89,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         header.setOnClickListener(this::onClick);
         search.setOnClickListener(this::onClick);
         add.setOnClickListener(this::onClick);
+        containerNotification.setOnClickListener(this::onClick);
 
         getUser();
         setFragment();
@@ -115,6 +116,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         add = findViewById(R.id.add);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        containerNotification = findViewById(R.id.notificationContainer);
     }
 
 
@@ -134,6 +136,10 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         else if(v == add)
         {
             startActivity(new Intent(this, LostFoundActivity.class));
+        }
+        else if(v == containerNotification)
+        {
+            startActivity(new Intent(this, NotificationActivity.class));
         }
     }
 
@@ -204,8 +210,8 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
     public void updateUI(String username, String imagePath, String extension)
     {
         name.setText(username);
-        if(imagePath != null && extension != null)
-        getImage(profile, imagePath+"."+extension, this);
+        if(imagePath != null)
+        getImage(profile, imagePath, this);
     }
 
     @Override

@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="95dp"
+        android:layout_height="71dp"
         android:background="@color/mainColor"
         android:visibility="visible"
         >
@@ -17,10 +17,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="horizontal"
             android:id="@+id/title1"
-            android:layout_marginTop="28dp">
+            android:layout_centerVertical="true">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -266,7 +265,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="16dp"
                     android:id="@+id/save"
-                    android:layout_marginBottom="20dp"/>
+                    android:layout_marginBottom="20dp"
+                    android:translationZ="10dp"/>
 
             </LinearLayout>
 

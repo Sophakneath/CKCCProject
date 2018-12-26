@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="95dp"
+        android:layout_height="71dp"
         android:background="@color/mainColor"
         android:visibility="visible"
         >
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/title1"
-            android:layout_marginTop="28dp">
+            android:layout_centerVertical="true">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -117,10 +117,17 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:src="@drawable/sea"
+                    android:background="@drawable/holderforpic"
                     android:scaleType="centerCrop"
                     android:id="@+id/picture"
                     />
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:src="@drawable/pic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/defaultpic"/>
 
                 <ImageView
                     android:layout_width="30dp"
@@ -186,6 +193,18 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
                 android:id="@+id/rewardDes"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="I found it"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_login"
+                android:textColor="@color/white"
+                android:id="@+id/founder"/>
         </LinearLayout>
 
     </ScrollView>

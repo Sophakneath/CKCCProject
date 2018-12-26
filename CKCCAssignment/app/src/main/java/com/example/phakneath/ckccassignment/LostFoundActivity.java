@@ -67,8 +67,6 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_lost_found);
         viewLostFragment = ViewDiscoverFragment.newInstance("","",false);
         viewDiscoverFragment = ViewDiscoverFragment.newInstance("","",true);
@@ -101,26 +99,6 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
         {
 
         }
-    }
-
-    public void openDiscover()
-    {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-        transaction.replace(R.id.container, viewDiscoverFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-    }
-
-    public void openFound()
-    {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.container, viewLostFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-        viewLostFragment.setType(false);
     }
 
     @Override
@@ -158,10 +136,7 @@ public class LostFoundActivity extends AppCompatActivity implements View.OnClick
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-
             }
         }
-
-
     }
 }

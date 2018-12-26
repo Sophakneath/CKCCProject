@@ -244,17 +244,21 @@ public class ViewDiscoverFragment extends Fragment {
         CropImage.activity()
                 .start(getActivity());
     }
-    public void  setImage(CropImage.ActivityResult result){
+    public void setImage(CropImage.ActivityResult result){
         try {
             File tempFile    = new File(result.getUri().getPath());
             Log.d("test",result.getUri().getPath().toString());
             if(tempFile.exists()){
               image.setImageURI(result.getUri());
+              uri = result.getUri();
+              pathImage = uri.getLastPathSegment(); //+ System.currentTimeMillis();
+              //extension = getFileExtension(uri);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
     public void onSelectImageClick(View view) {
         if (CropImage.isExplicitCameraPermissionRequired(getContext())) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE);
@@ -306,167 +310,6 @@ public class ViewDiscoverFragment extends Fragment {
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
-    /*public void onLoadImageClick() {
-        startActivityForResult(getPickImageChooserIntent(), 200);
-    }
-
-    public void onCropImageClick() {
-        Bitmap cropped =  image.getCroppedImage();
-        if (cropped != null)
-            image.setImageBitmap(cropped);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            uri =  getPickImageResultUri(data);
-            //Glide.with(this).load(uri).into(image);
-            defaultpic.setVisibility(View.GONE);
-            pathImage = uri.getLastPathSegment() + System.currentTimeMillis();
-            extension = getFileExtension(uri);
-            Log.e("ooooo", "Path Image : " + pathImage);
-
-            boolean requirePermissions = false;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                    isUriRequiresPermissions(uri)) {
-
-                // request permissions and handle the result in onRequestPermissionsResult()
-                requirePermissions = true;
-                mCropImageUri = uri;
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-            }
-
-            if (!requirePermissions) {
-                image.setImageUriAsync(uri);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            image.setImageUriAsync(mCropImageUri);
-        } else {
-            Toast.makeText(getContext(), "Required permissions are not granted", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public Intent getPickImageChooserIntent() {
-
-// Determine Uri of camera image to  save.
-        Uri outputFileUri =  getCaptureImageOutputUri();
-
-        List<Intent> allIntents = new ArrayList<>();
-        PackageManager packageManager =  getActivity().getPackageManager();
-
-// collect all camera intents
-        Intent captureIntent = new  Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> listCam =  packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            Intent intent = new  Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            if (outputFileUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            }
-            allIntents.add(intent);
-        }
-
-// collect all gallery intents
-        Intent galleryIntent = new  Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        List<ResolveInfo> listGallery =  packageManager.queryIntentActivities(galleryIntent, 0);
-        for (ResolveInfo res : listGallery) {
-            Intent intent = new  Intent(galleryIntent);
-            intent.setComponent(new  ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            allIntents.add(intent);
-        }
-
-// the main intent is the last in the  list (fucking android) so pickup the useless one
-        Intent mainIntent =  allIntents.get(allIntents.size() - 1);
-        for (Intent intent : allIntents) {
-            if  (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity"))  {
-                mainIntent = intent;
-                break;
-            }
-        }
-        allIntents.remove(mainIntent);
-
-// Create a chooser from the main  intent
-        Intent chooserIntent =  Intent.createChooser(mainIntent, "Select source");
-
-// Add all other intents
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,  allIntents.toArray(new Parcelable[allIntents.size()]));
-
-        return chooserIntent;
-    }
-
-    private Uri getCaptureImageOutputUri() {
-        Uri outputFileUri = null;
-        File getImage = getContext().getExternalCacheDir();
-        if (getImage != null) {
-            outputFileUri = Uri.fromFile(new  File(getImage.getPath(), "pickImageResult.jpeg"));
-        }
-        return outputFileUri;
-    }
-
-    public Uri getPickImageResultUri(Intent  data) {
-        boolean isCamera = true;
-        if (data != null && data.getData() != null) {
-            String action = data.getAction();
-            isCamera = action != null  && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-        }
-        return isCamera ?  getCaptureImageOutputUri() : data.getData();
-    }
-
-    public boolean isUriRequiresPermissions(Uri uri) {
-        try {
-            ContentResolver resolver = getContext().getContentResolver();
-            InputStream stream = resolver.openInputStream(uri);
-            stream.close();
-            return false;
-        } catch (FileNotFoundException e) {
-            if (e.getCause() instanceof ErrnoException) {
-                return true;
-            }
-        } catch (Exception e) {
-        }
-        return false;
-    }*/
-
-    //upload image to Firebase Storage
-    public void uploadImage(Uri uri, User user, String imagePath, String extension) {
-
-        storageReference = FirebaseStorage.getInstance().getReference();
-        if(uri != null)
-        {
-            ref = storageReference.child("posting/").child( imagePath + "." + extension);
-            mUploadTask = ref.putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            //Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        }
-                    });
-        }
-    }
-
-
     public void postLost()
     {
         String item = found.getText().toString();
@@ -478,7 +321,7 @@ public class ViewDiscoverFragment extends Fragment {
 
         if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
         if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, null, null);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,rewardDes, uID, pathImage, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -501,7 +344,7 @@ public class ViewDiscoverFragment extends Fragment {
         String con = contact.getText().toString();
         String rem = remark.getText().toString();
         String id = "F" + uID + System.currentTimeMillis();
-        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, null, null);
+        LostFound lostFound = new LostFound(id, item,loc,con,rem,null, uID, pathImage, null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("founds").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -516,7 +359,37 @@ public class ViewDiscoverFragment extends Fragment {
                 Toast.makeText(getActivity().getBaseContext(), "Post Unsuccessfull", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+
+    //upload image to Firebase Storage
+    public void uploadImage(Uri uri, String imagePath, String extension) {
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+        if(uri != null)
+        {
+            ref = storageReference.child("posting/").child(imagePath);
+            mUploadTask = ref.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            LostFoundActivity.activity.finish();
+                            Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+        }
     }
 
     public void verifyUpdate()
@@ -529,12 +402,19 @@ public class ViewDiscoverFragment extends Fragment {
         {
             if (isFoundFragment){
                 updateUser();
+                if(mUploadTask == null || !mUploadTask.isInProgress())
+                    uploadImage(uri,pathImage,extension);
             }else{
-                postLost();
+                if(count == 1 && TextUtils.isEmpty(reward.getText()))
+                {
+                    Toast.makeText(getContext(), "Please enter the reward desciption", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    postLost();
+                    if(mUploadTask == null || !mUploadTask.isInProgress())
+                        uploadImage(uri,pathImage,extension);
+                }
             }
-
-            LostFoundActivity.activity.finish();
-            Toast.makeText(getContext(), "Post Successfull", Toast.LENGTH_SHORT).show();
         }
     }
 

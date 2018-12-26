@@ -45,20 +45,26 @@ public class OtherProfileActivity extends AppCompatActivity implements View.OnCl
     FirebaseStorage storage;
     FirebaseAuth mAuth;
     String uid;
-    PostingActivity postingActivity = new PostingActivity();
-    otherDiscoverFragment found = new otherDiscoverFragment();
-    otherLostFragment lost = new otherLostFragment();
+    PostingActivity postingActivity;
+    otherDiscoverFragment found;
+    otherLostFragment lost;
     NestedScrollView scrollView;
     ViewPager viewPager;
     SmartTabLayout viewPagerTab;
-    List<LostFound> itemFound = new ArrayList<>();
-    List<LostFound> itemLost = new ArrayList<>();
+    List<LostFound> itemFound;
+    List<LostFound> itemLost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         setContentView(R.layout.activity_other_profile);
+        postingActivity = new PostingActivity();
+        found = new otherDiscoverFragment();
+        lost = new otherLostFragment();
+
+        itemFound = new ArrayList<>();
+        itemLost = new ArrayList<>();
 
         initView();
         getIntentUser();

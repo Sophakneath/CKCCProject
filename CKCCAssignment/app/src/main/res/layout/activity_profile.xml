@@ -279,7 +279,7 @@
                     android:layout_gravity="bottom|right"
                     android:layout_margin="20dp"
                     app:srcCompat="@drawable/ic_add_black_24dp"
-                    android:backgroundTint="@color/mainColor"
+                    android:backgroundTint="#d53b6b"
                     app:borderWidth="0dp"
                     app:elevation="6dp"
                     app:fabSize="normal"

@@ -41,6 +41,7 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
+    foundListAdapter foundListAdapter;
 
     public otherLostAdapter(Context context, List<LostFound> lostFounds)
     {
@@ -65,13 +66,16 @@ public class otherLostAdapter extends RecyclerView.Adapter<otherLostAdapter.View
     public void onBindViewHolder(@NonNull otherLostAdapter.ViewHolder holder, int position) {
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
+        foundListAdapter = new foundListAdapter();
 
         LostFound lostFound = lostFounds.get(position);
-        holder.found.setText("Found : " + lostFound.getItem());
+        holder.found.setText("Lost : " + lostFound.getItem());
         holder.location.setText("Location : " + lostFound.getLocation());
         holder.contact.setText("Contact : " + lostFound.getContactNum());
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
         holder.more.setVisibility(View.GONE);
+        if(lostFound.getImage() != null){ foundListAdapter.getImage(holder.imagefound, lostFound.getImage(), context); holder.defaultpic.setVisibility(View.GONE); }
+
 
         SaveLostFound saveLostFound = new SaveLostFound();
         saveLostFound.setId(lostFound.getId());

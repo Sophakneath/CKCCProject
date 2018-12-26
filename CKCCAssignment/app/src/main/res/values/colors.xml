@@ -3,8 +3,8 @@
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#ff4081</color>
-    <color name="mainColor">#717171</color>
-    <color name="primaryColor">#00C4CC</color>
+    <color name="mainColor">#424242</color>
+    <color name="primaryColor">#d53b6b</color>
     <color name="mainTitle">#727272</color>
     <color name="subTitle">#9A9A9A</color>
     <color name="whiteBlurr">#dec1c1c1</color>

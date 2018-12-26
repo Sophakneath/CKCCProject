@@ -28,7 +28,8 @@
                     android:layout_height="65dp"
                     android:layout_margin="10dp"
                     android:id="@+id/picture"
-                    android:src="@drawable/userprofile"/>
+                    android:src="@drawable/userprofile"
+                    android:scaleType="centerCrop"/>
 
             </RelativeLayout>
 

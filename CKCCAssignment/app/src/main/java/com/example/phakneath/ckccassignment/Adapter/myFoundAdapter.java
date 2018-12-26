@@ -41,6 +41,7 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
     FirebaseAuth mAuth;
     String uid;
     int count = 0;
+    foundListAdapter foundListAdapter;
 
     public myFoundAdapter(Context context, List<LostFound> lostFounds, User user, List<SaveLostFound> saves)
     {
@@ -62,11 +63,14 @@ public class myFoundAdapter extends RecyclerView.Adapter<myFoundAdapter.ViewHold
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         LostFound lostFound = lostFounds.get(position);
+        foundListAdapter = new foundListAdapter();
 
         holder.found.setText("Found : " + lostFound.getItem());
         holder.location.setText("Location : " + lostFound.getLocation());
         holder.contact.setText("Contact : " + lostFound.getContactNum());
         if(lostFound.getReward()!= null) holder.star.setVisibility(View.VISIBLE);
+
+        if(lostFound.getImage() != null){ foundListAdapter.getImage(holder.imagefound, lostFound.getImage(), context); holder.defaultpic.setVisibility(View.GONE); }
 
         if(saves.size() >0)
         for (SaveLostFound l: saves) {

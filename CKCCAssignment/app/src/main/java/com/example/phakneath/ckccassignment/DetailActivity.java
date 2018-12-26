@@ -9,12 +9,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
+import com.example.phakneath.ckccassignment.Dialog.FounderDialog;
 import com.example.phakneath.ckccassignment.Fragment.PostDiscoverFragment;
 import com.example.phakneath.ckccassignment.Fragment.myDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
@@ -40,11 +43,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     CircleImageView back;
     TextView username, found, location, contact, remark, rewardDes;
     CircleImageView profile;
-    ImageView more, star, picture;
-    LostFound lostFound = new LostFound();
+    ImageView more, star, picture, defaultpic;
+    LostFound lostFound;
     RelativeLayout save, share, gotoProfile;
     User user;
-    PostingActivity postingActivity = new PostingActivity();
+    PostingActivity postingActivity;
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     String uid;
@@ -52,19 +55,26 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     ImageView onSave, notsave;
     List<LostFound> saves;
     SaveLostFound saveLostFound;
+    Button founder;
+    FounderDialog dialog;
+    foundListAdapter foundListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_detail);
 
         initView();
+        postingActivity = new PostingActivity();
+        foundListAdapter = new foundListAdapter();
+        lostFound = new LostFound();
+        dialog = new FounderDialog();
+
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
         back.setOnClickListener(this::onClick);
         save.setOnClickListener(this::onClick);
         gotoProfile.setOnClickListener(this::onClick);
+        founder.setOnClickListener(this::onClick);
         getUser();
     }
 
@@ -179,12 +189,22 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         if(user != null)
         {
             username.setText(user.getUsername());
-            if(user.getImagePath() != null && user.getExtension() != null)
+            if(user.getImagePath() != null)
             {
-                postingActivity.getImage(profile, user.getImagePath()+"."+user.getExtension(), this);
+                postingActivity.getImage(profile, user.getImagePath(), this);
             }
         }
-        found.setText("Found : " + lostFound.getItem());
+
+        if(lostFound.getId().startsWith("F")) {
+            found.setText("Found : " + lostFound.getItem());
+            founder.setText("I Lost it");
+        }
+        else if(lostFound.getId().startsWith("L"))
+        {
+            found.setText("Lost : " + lostFound.getItem());
+            founder.setText("I Found it");
+        }
+
         location.setText("Location : " +lostFound.getLocation());
         contact.setText("Contact : " +lostFound.getContactNum());
         remark.setText("Remark : " +lostFound.getRemark());
@@ -196,6 +216,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         else rewardDes.setText("Reward Description : None");
 
         if(lostFound.getMyOwner().equals(uid)) more.setVisibility(View.VISIBLE);
+        if(lostFound.getImage() != null) {foundListAdapter.getImage(picture,lostFound.getImage(),this); defaultpic.setVisibility(View.GONE);}
 
         more.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,6 +371,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         onSave = findViewById(R.id.onsave);
         notsave = findViewById(R.id.notsave);
         gotoProfile = findViewById(R.id.gotoProfile);
+        founder = findViewById(R.id.founder);
+        defaultpic = findViewById(R.id.defaultpic);
     }
 
     public void getSaves(LostFound lf)
@@ -464,18 +487,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 String textension = dataSnapshot.child("extension").getValue(String.class);
                 String id = dataSnapshot.child("id").getValue(String.class);
 
-                /*List<LostFound> tlosts = new ArrayList<>();
-                List<LostFound> tfounds = new ArrayList<>();
-                LostFound lostFound = new LostFound();
-                for (DataSnapshot d: dataSnapshot.child("losts").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tlosts.add(lostFound);
-                }
-                for (DataSnapshot d: dataSnapshot.child("founds").getChildren()) {
-                    lostFound = d.getValue(LostFound.class);
-                    tfounds.add(lostFound);
-                }*/
-
                 otherUser.setUsername(tusername);
                 otherUser.setImagePath(timagepath);
                 otherUser.setExtension(textension);
@@ -555,6 +566,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             {
                 getOtherProfile();
             }
+        }
+        else if(v == founder)
+        {
+            if(saveLostFound == null)
+            {
+                SaveLostFound saveLostFound = new SaveLostFound();
+                saveLostFound.setMyOwnerID(lostFound.getMyOwner());
+                saveLostFound.setId(lostFound.getId());
+                dialog.setData(saveLostFound);
+            }
+            else dialog.setData(saveLostFound);
+
+            dialog.show(getFragmentManager(), "myFounderDialog");
         }
     }
 }
