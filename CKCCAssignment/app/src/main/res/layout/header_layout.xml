@@ -43,8 +43,8 @@
                 android:layout_below="@+id/profileCon"
                 android:layout_marginTop="8dp"
                 android:layout_centerHorizontal="true"
-                app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="@color/whiteBlurr"
+                app:cardCornerRadius="17dp"
+                app:cardBackgroundColor="@color/darkBlack"
                 >
 
                 <TextView
@@ -52,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="Username"
                     android:textSize="17dp"
+                    android:padding="2dp"
                     android:id="@+id/username"
                     android:textColor="@color/white"
                     android:layout_marginLeft="10dp"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lightGray">#f5f5f5</color>
+    <color name="lightGray">#e2e2e2</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#ff4081</color>
@@ -15,4 +15,5 @@
     <color name="newNotifi">#d4f2ff</color>
     <color name="oldNotifi">#e4f3fa</color>
     <color name="seenNotifi">#00ffffff</color>
+    <color name="darkBlack">#42000000</color>
 </resources>
