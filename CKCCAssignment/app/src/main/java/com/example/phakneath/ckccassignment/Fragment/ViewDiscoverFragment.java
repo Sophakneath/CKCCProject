@@ -323,8 +323,8 @@ public class ViewDiscoverFragment extends Fragment {
         String id = "L" + uID + System.currentTimeMillis();
         String rewardDes = reward.getText().toString();
 
-        if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
-        if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
+        if(!TextUtils.isEmpty(remark.getText().toString().trim())) rem = remark.getText().toString().trim();
+        if(!TextUtils.isEmpty(reward.getText().toString().trim())) rewardDes = reward.getText().toString().trim();
         LostFound lostFound = new LostFound(id, item, loc, con, rem, rewardDes, uID, pathImage, null, AppSingleton.getInstance().getPlayerId(),System.currentTimeMillis());
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Posting").child("individual").child(uID).child("losts").child(id).setValue(lostFound).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -407,7 +407,7 @@ public class ViewDiscoverFragment extends Fragment {
 
     public void verifyUpdate()
     {
-        if(TextUtils.isEmpty(found.getText()) || TextUtils.isEmpty(location.getText()) || TextUtils.isEmpty(contact.getText()))
+        if(TextUtils.isEmpty(found.getText().toString().trim()) || TextUtils.isEmpty(location.getText().toString().trim()) || TextUtils.isEmpty(contact.getText().toString().trim()))
         {
             Toast.makeText(getContext(), "Please enter the above information", Toast.LENGTH_SHORT).show();
         }
@@ -419,7 +419,7 @@ public class ViewDiscoverFragment extends Fragment {
                 if(mUploadTask == null || !mUploadTask.isInProgress())
                     uploadImage(uri,pathImage,extension);
             }else{
-                if(count == 1 && TextUtils.isEmpty(reward.getText()))
+                if(count == 1 && TextUtils.isEmpty(reward.getText().toString().trim()))
                 {
                     Toast.makeText(getContext(), "Please enter the reward desciption", Toast.LENGTH_SHORT).show();
                 }

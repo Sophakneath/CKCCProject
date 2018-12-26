@@ -198,8 +198,10 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
         if(pathImage == null) image = lostFound.getImage();
         else image = pathImage;
 
-        if(!TextUtils.isEmpty(remark.getText())) rem = remark.getText().toString();
-        if(!TextUtils.isEmpty(reward.getText())) rewardDes = reward.getText().toString();
+
+        if(!TextUtils.isEmpty(remark.getText().toString().trim())) rem = remark.getText().toString();
+        if(!TextUtils.isEmpty(reward.getText().toString().trim())) rewardDes = reward.getText().toString();
+
 
         LostFound lostFound = new LostFound(id, items, loc, con, rem, rewardDes, uID, image, null, AppSingleton.getInstance().getPlayerId(),time);
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -246,13 +248,13 @@ public class EditPostActivity extends AppCompatActivity implements View.OnClickL
 
     public void verifyUpdate()
     {
-        if(TextUtils.isEmpty(item.getText()) || TextUtils.isEmpty(location.getText()) || TextUtils.isEmpty(contact.getText()))
+        if(TextUtils.isEmpty(item.getText().toString().trim()) || TextUtils.isEmpty(location.getText().toString().trim()) || TextUtils.isEmpty(contact.getText().toString().trim()))
         {
             Toast.makeText(this, "Please enter the above information", Toast.LENGTH_SHORT).show();
         }
         else
         {
-            if(count == 1 && TextUtils.isEmpty(reward.getText()))
+            if(count == 1 && TextUtils.isEmpty(reward.getText().toString().trim()))
             {
                 Toast.makeText(this, "Please enter the reward desciption", Toast.LENGTH_SHORT).show();
             }
