@@ -1,6 +1,10 @@
 package com.example.phakneath.ckccassignment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +28,13 @@ import com.example.phakneath.ckccassignment.Fragment.myDiscoverFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.SaveLostFound;
 import com.example.phakneath.ckccassignment.Model.User;
+import com.facebook.share.model.ShareHashtag;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.ShareMedia;
+import com.facebook.share.model.ShareMediaContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -82,6 +93,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         founder.setOnClickListener(this::onClick);
         onSave.setOnClickListener(this::onClick);
         notsave.setOnClickListener(this::onClick);
+        share.setOnClickListener(this::onClick);
         getUser();
     }
 
@@ -616,6 +628,33 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             else dialog.setData(saveLostFound);
 
             dialog.show(getFragmentManager(), "myFounderDialog");
+        }
+        else if (v == share){
+
+            String caption = "#LOSTFREE" + "\n"+lostFound.getItem()+"\n"+lostFound.getRemark();
+            Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.ic_launcher_foreground);
+
+            try {
+                b = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            SharePhoto sharePhoto = new SharePhoto.Builder()
+
+                    .setCaption(caption)
+                    .setBitmap(b)
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(sharePhoto)
+                    .setShareHashtag(new ShareHashtag.Builder().setHashtag("#lostfreee").build())
+                    .build();
+
+
+
+            ShareDialog shareDialog = new ShareDialog(DetailActivity.this);
+            shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+
         }
     }
 }

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -37,6 +39,10 @@ import com.example.phakneath.ckccassignment.Fragment.PostLostFragment;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.Notification;
 import com.example.phakneath.ckccassignment.sharePreferences.UserPreferences;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.ShareMediaContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -155,6 +161,7 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         {
             startActivity(new Intent(this, NotificationActivity.class));
         }
+
     }
 
     public void signout()
@@ -233,6 +240,9 @@ public class PostingActivity extends AppCompatActivity implements View.OnClickLi
         int id = item.getItemId();
         switch(id)
         {
+            case R.id.share :
+
+                break;
             case R.id.logout: logoutDialog(); signout();
                 break;
             case R.id.home: drawerLayout.closeDrawer(Gravity.LEFT);
