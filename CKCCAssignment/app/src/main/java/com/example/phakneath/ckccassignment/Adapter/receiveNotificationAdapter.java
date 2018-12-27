@@ -55,7 +55,7 @@ public class receiveNotificationAdapter extends RecyclerView.Adapter<receiveNoti
 
         getUsename(notification, holder.description, holder.profile);
         if(notification.getStatus().equals("new")) holder.con.setBackgroundColor(context.getResources().getColor(R.color.newNotifi));
-        else if(notification.getStatus().equals("old")) holder.con.setBackgroundColor(context.getResources().getColor(R.color.oldNotifi));
+        //else if(notification.getStatus().equals("old")) holder.con.setBackgroundColor(context.getResources().getColor(R.color.oldNotifi));
         else if(notification.getStatus().equals("seen")) holder.con.setBackgroundColor(context.getResources().getColor(R.color.seenNotifi));
 
         PostingActivity.badgeCount.setText("0");
@@ -75,14 +75,14 @@ public class receiveNotificationAdapter extends RecyclerView.Adapter<receiveNoti
             }
         });
 
-        final android.os.Handler handler = new android.os.Handler();
+        /*final android.os.Handler handler = new android.os.Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if(!notification.getStatus().equals("seen"))
                 setStatusToOld(notification);
             }
-        }, 3000);
+        }, 3000);*/
 
     }
 
@@ -110,7 +110,7 @@ public class receiveNotificationAdapter extends RecyclerView.Adapter<receiveNoti
     public void getUsename(Notification notification, TextView description, CircleImageView profile)
     {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child(notification.getPostOwnerID()).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("user").child(notification.getFounderLosterID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);

@@ -107,7 +107,8 @@
                         android:layout_height="wrap_content"
                         android:text="6 minutes ago"
                         android:textSize="13dp"
-                        android:textColor="@color/mainTitle"/>
+                        android:textColor="@color/mainTitle"
+                        android:id="@+id/times"/>
                 </LinearLayout>
 
                 <ImageView

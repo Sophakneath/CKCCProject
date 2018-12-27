@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/lightGray">
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,17 +70,31 @@
                 android:paddingBottom="10dp"
                 android:id="@+id/gotoProfile">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:src="@drawable/userprofile"
-                    android:id="@+id/profilePic"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Con">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/userprofile"
+                        android:id="@+id/profilePic"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"/>
+
+                    <ImageView
+                        android:layout_width="71dp"
+                        android:layout_height="71dp"
+                        android:id="@+id/imv_circle"
+                        android:background="@drawable/profile_circle" />
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_toRightOf="@+id/profilePic"
+                    android:layout_toRightOf="@+id/Con"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp">
 
@@ -88,9 +102,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Username"
-                        android:textSize="17dp"
+                        android:textSize="20dp"
                         android:textColor="@color/mainTitle1"
                         android:id="@+id/username"
+                        android:textStyle="bold"
                         />
                 </LinearLayout>
 

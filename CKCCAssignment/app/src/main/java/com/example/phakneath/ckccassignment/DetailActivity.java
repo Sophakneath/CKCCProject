@@ -39,15 +39,20 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener{
 
     CircleImageView back;
-    TextView username, found, location, contact, remark, rewardDes;
+    TextView username, found, location, contact, remark, rewardDes, times;
     CircleImageView profile;
     ImageView more, star, picture, defaultpic;
     LostFound lostFound;
@@ -259,6 +264,22 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+        long postTimes = ((System.currentTimeMillis() - lostFound.getTime())/ 1000)/60;
+        times.setText(postTimes+" minutes ago");
+        if(postTimes >= 60) {
+            postTimes = postTimes /60;
+            times.setText(postTimes+" hours ago");
+            if(postTimes >= 24) {
+                postTimes = postTimes / 24;
+                times.setText(postTimes+" days ago");
+                if(postTimes >= 7)
+                {
+                    postTimes = postTimes / 7;
+                    times.setText(postTimes+" weeks ago");
+                }
+            }
+        }
+
     }
 
     public void openEditPost()
@@ -387,6 +408,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         gotoProfile = findViewById(R.id.gotoProfile);
         founder = findViewById(R.id.founder);
         defaultpic = findViewById(R.id.defaultpic);
+        times = findViewById(R.id.times);
     }
 
     public void getSaves(LostFound lf)
