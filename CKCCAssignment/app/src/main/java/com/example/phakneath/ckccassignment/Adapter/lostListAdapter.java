@@ -2,6 +2,8 @@ package com.example.phakneath.ckccassignment.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -49,6 +51,11 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
     String uid;
     int count = 0;
     foundListAdapter foundListAdapter;
+    public OnShareListioner onShareListioner;
+
+    public void setOnShareListioner(OnShareListioner onShareListioner){
+        this.onShareListioner = onShareListioner;
+    }
 
     public lostListAdapter(Context context, List<LostFound> lostFounds, String uID)
     {
@@ -138,6 +145,21 @@ public class lostListAdapter extends RecyclerView.Adapter<lostListAdapter.ViewHo
             public void onClick(View v) {
                 saveLostFound.setTime(System.currentTimeMillis());
                 onSave(saveLostFound, holder.onSave,holder.notsave);
+            }
+        });
+        holder.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (onShareListioner != null){
+                    try {
+                        Bitmap b = ((BitmapDrawable) holder.imagefound.getDrawable()).getBitmap();
+                        onShareListioner.onShareClick(b,lostFound);
+                    }catch (Exception e){
+
+                    }
+                }
+
             }
         });
     }

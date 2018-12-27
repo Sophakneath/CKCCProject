@@ -65,7 +65,11 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
     String uid;
     int count = 0;
     FirebaseStorage storage;
+    public OnShareListioner onShareListioner;
 
+    public void setOnShareListioner(OnShareListioner onShareListioner){
+        this.onShareListioner = onShareListioner;
+    }
     public foundListAdapter(Context context, List<LostFound> lostFounds, String uID)
     {
         this.context = context;
@@ -156,7 +160,14 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
             @Override
             public void onClick(View v) {
 
+                if (onShareListioner != null){
+                    try {
+                        Bitmap b = ((BitmapDrawable) holder.imagefound.getDrawable()).getBitmap();
+                        onShareListioner.onShareClick(b,lostFound);
+                    }catch (Exception e){
 
+                    }
+                }
 
             }
         });
@@ -298,3 +309,4 @@ public class foundListAdapter extends RecyclerView.Adapter<foundListAdapter.View
         }
     }
 }
+

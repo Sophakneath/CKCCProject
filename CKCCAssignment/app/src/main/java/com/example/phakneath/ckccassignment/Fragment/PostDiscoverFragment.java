@@ -2,6 +2,9 @@ package com.example.phakneath.ckccassignment.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phakneath.ckccassignment.Adapter.OnShareListioner;
 import com.example.phakneath.ckccassignment.Adapter.foundListAdapter;
 import com.example.phakneath.ckccassignment.Adapter.myLostAdapter;
 import com.example.phakneath.ckccassignment.DetailActivity;
@@ -22,6 +26,10 @@ import com.example.phakneath.ckccassignment.EditPostActivity;
 import com.example.phakneath.ckccassignment.Model.LostFound;
 import com.example.phakneath.ckccassignment.Model.User;
 import com.example.phakneath.ckccassignment.R;
+import com.facebook.share.model.ShareHashtag;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -139,6 +147,34 @@ public class PostDiscoverFragment extends Fragment implements foundListAdapter.o
         foundList.setLayoutManager(layoutManager);
         foundListAdapter = new foundListAdapter(getContext(), lostFounds, uid);
         foundList.setAdapter(foundListAdapter);
+        foundListAdapter.setOnShareListioner(new OnShareListioner() {
+            @Override
+            public void onShareClick(Bitmap bitmap, LostFound lostFound) {
+
+
+                if (bitmap != null){
+                    String caption = "#lostfreee\n" +
+                            lostFound.getItem()+
+                            "\n\n#Description: "+lostFound.getRemark()+
+                            "\n#Reward: "+lostFound.getRemark();
+
+                    SharePhoto sharePhoto = new SharePhoto.Builder()
+
+                            .setBitmap(bitmap)
+                            .build();
+                    SharePhotoContent content = new SharePhotoContent.Builder()
+                            .addPhoto(sharePhoto)
+                            .setShareHashtag(new ShareHashtag.Builder().setHashtag(caption).build())
+                            .build();
+
+
+
+                    ShareDialog shareDialog = new ShareDialog(getActivity());
+                    shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+                }
+
+            }
+        });
         //getSaves();
     }
 

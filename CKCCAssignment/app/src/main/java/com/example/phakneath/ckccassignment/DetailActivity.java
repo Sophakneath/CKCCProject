@@ -653,29 +653,34 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
         else if (v == share){
 
-            String caption = "#LOSTFREE" + "\n"+lostFound.getItem()+"\n"+lostFound.getRemark();
-            Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.ic_launcher_foreground);
+           \
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.ic_launcher_foreground);
 
             try {
-                b = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+                bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
 
             }catch (Exception e){
                 e.printStackTrace();
             }
-            SharePhoto sharePhoto = new SharePhoto.Builder()
+            if (bitmap != null) {
+                String caption = "#lostfreee\n" +
+                        lostFound.getItem() +
+                        "\n\n#Description: " + lostFound.getRemark() +
+                        "\n#Reward: " + lostFound.getRemark();
 
-                    .setCaption(caption)
-                    .setBitmap(b)
-                    .build();
-            SharePhotoContent content = new SharePhotoContent.Builder()
-                    .addPhoto(sharePhoto)
-                    .setShareHashtag(new ShareHashtag.Builder().setHashtag("#lostfreee").build())
-                    .build();
+                SharePhoto sharePhoto = new SharePhoto.Builder()
+
+                        .setBitmap(bitmap)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(sharePhoto)
+                        .setShareHashtag(new ShareHashtag.Builder().setHashtag(caption).build())
+                        .build();
 
 
-
-            ShareDialog shareDialog = new ShareDialog(DetailActivity.this);
-            shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+                ShareDialog shareDialog = new ShareDialog(DetailActivity.this);
+                shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+            }
 
         }
     }
