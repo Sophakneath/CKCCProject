@@ -87,7 +87,7 @@ public class NotificationDetailActivity extends AppCompatActivity implements Vie
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     LostFound lostFound = dataSnapshot.getValue(LostFound.class);
-                    setUIPosts(lostFound);
+                    if(lostFound != null) setUIPosts(lostFound);
                 }
 
                 @Override
@@ -96,13 +96,13 @@ public class NotificationDetailActivity extends AppCompatActivity implements Vie
                 }
             });
         }
-        if(notification.getPostID().startsWith("L"))
+        else if(notification.getPostID().startsWith("L"))
         {
             mDatabase.child("Posting").child("individual").child(notification.getPostOwnerID()).child("losts").child(notification.getPostID()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     LostFound lostFound = dataSnapshot.getValue(LostFound.class);
-                    setUIPosts(lostFound);
+                    if(lostFound != null) setUIPosts(lostFound);
                 }
 
                 @Override
